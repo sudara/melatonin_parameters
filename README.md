@@ -14,17 +14,22 @@ When in doubt see the tests for behavior specifics.
 
 This is a juce module. 
 
-If you are a solo coder using Projucer, you could git clone and manually add the module your project via the UI.
+If you are a solo coder using Projucer, you could git clone and then manually add the module your project via the UI.
 
-I'm not a fan of copying and pasting dependencies (IMO that's one of reasons we can't have nice things in C++). I use git submodules to add a new module like so:
+I'm not a fan of copying and pasting dependencies (IMO that's one of reasons we can't have nice things in C++). This will set you up with a git submodule tracking the `main` branch:
 ```
-git submodule add https://github.com/sudara/melatonin_parameters
+git submodule add -b main https://github.com/sudara/melatonin_parameters
 git commit -m "Added melatonin_parameters submodule."
 ```
 
 Inform JUCE about the module in your `CMakeLists.txt`:
 ```
 juce_add_module("modules/melatonin_parameters")
+```
+
+When you want to update melatonin_parameters, you can run
+```
+git submodule update --remote --merge melatonin_parameter
 ```
 
 zzzzzz.... Wake me up when C++ has widely supported package management plzthxbai.
