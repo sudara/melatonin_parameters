@@ -10,9 +10,6 @@ These are the parameter behaviors I want by default a lot of the time. Something
 
 When in doubt see the tests for behavior specifics.
 
-
-[![Screenshot 2021-04-08 Linear to logarithmic range conversion - Safari](https://user-images.githubusercontent.com/472/114071474-73822e00-98a1-11eb-95a3-405faae1e768.jpg)](https://www.desmos.com/calculator/qkc6naksy5)
-
 ## How to use
 
 This is a juce module. 
@@ -74,6 +71,8 @@ juce::AudioParameterFloat ("frequency", "Frequency", logarithmicRange (20.0f, 20
 Imagine a release knob. The first little bit of the knob, you'd probably want some fine control over 0-100ms to craft short release times. Maybe by the time you get to the middle of the knob it's at 1s. And then the rest of the knob can handle 1-10s, where granularity is much less important.
 
 ### Implementation
+
+[![Screenshot 2021-04-08 Linear to logarithmic range conversion - Safari](https://user-images.githubusercontent.com/472/114071474-73822e00-98a1-11eb-95a3-405faae1e768.jpg)](https://www.desmos.com/calculator/qkc6naksy5)
 
 The math can be viewed at [this desmos link](https://www.desmos.com/calculator/qkc6naksy5).
 
