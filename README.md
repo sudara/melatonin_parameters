@@ -10,6 +10,9 @@ These are the parameter behaviors I want by default a lot of the time. Something
 
 When in doubt see the tests for behavior specifics.
 
+
+[![Screenshot 2021-04-08 Linear to logarithmic range conversion - Safari](https://user-images.githubusercontent.com/472/114071474-73822e00-98a1-11eb-95a3-405faae1e768.jpg)](https://www.desmos.com/calculator/qkc6naksy5)
+
 ### How to use
 
 This is a juce module. 
