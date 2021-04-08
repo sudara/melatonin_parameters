@@ -122,7 +122,7 @@ This is is optimized for normal person usability, *not* for accuracy.
 
 
 
-### timeValueFromString Implementation
+## timeValueFromString Implementation
 
 1. Values can be with or without decimal
 
