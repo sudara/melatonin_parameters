@@ -1,4 +1,4 @@
-## Melatonin Parameters
+# Melatonin Parameters
 
 This is a very basic C++ JUCE module that contains
 
@@ -13,7 +13,7 @@ When in doubt see the tests for behavior specifics.
 
 [![Screenshot 2021-04-08 Linear to logarithmic range conversion - Safari](https://user-images.githubusercontent.com/472/114071474-73822e00-98a1-11eb-95a3-405faae1e768.jpg)](https://www.desmos.com/calculator/qkc6naksy5)
 
-### How to use
+## How to use
 
 This is a juce module. 
 
@@ -33,7 +33,7 @@ juce_add_module("modules/melatonin_parameters")
 zzzzzz.... Wake me up when C++ has widely supported package management plzthxbai.
 
 
-### Running tests
+## Running tests
 
 Catch2 tests are in `melatonin_parameters.cpp` surrounded by `if RUN_MELATONIN_TESTS`
 
