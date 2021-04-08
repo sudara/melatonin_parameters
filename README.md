@@ -22,14 +22,14 @@ git submodule add -b main https://github.com/sudara/melatonin_parameters
 git commit -m "Added melatonin_parameters submodule."
 ```
 
-Inform JUCE about the module in your `CMakeLists.txt`:
-```
-juce_add_module("modules/melatonin_parameters")
-```
-
 When you want to update melatonin_parameters, you can run
 ```
 git submodule update --remote --merge melatonin_parameter
+```
+
+If you use CMake, inform JUCE about the module in your `CMakeLists.txt`:
+```
+juce_add_module("modules/melatonin_parameters")
 ```
 
 zzzzzz.... Wake me up when C++ has widely supported package management plzthxbai.
