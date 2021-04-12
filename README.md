@@ -12,15 +12,15 @@ These are the parameter behaviors I want by defaulte. Something like this could 
 
 If you are a solo coder using Projucer, you could git clone and then manually add this module your project via the UI.
 
-I'm not a fan of copying and pasting dependencies (IMO that's one of reasons we can't have nice things in C++). So, assuming you use git for similar reasons, this will set you up with a git submodule tracking the `main` branch:
+I'm not a fan of copying and pasting dependencies (IMO that's one of reasons we can't have nice things in C++). Assuming you use git and want/have modules in a `modules` folder in your project, this will set you up with a git submodule tracking the `main` branch:
 ```
-git submodule add -b main https://github.com/sudara/melatonin_parameters
+git submodule add -b main https://github.com/sudara/melatonin_parameters modules/melatonin_parameters
 git commit -m "Added melatonin_parameters submodule."
 ```
 
 When you want to update melatonin_parameters, you can now run
 ```
-git submodule update --remote --merge melatonin_parameters
+git submodule update --remote --merge modules/melatonin_parameters
 ```
 
 If you use CMake, you can inform JUCE about the module in your `CMakeLists.txt`:
