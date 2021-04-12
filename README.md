@@ -1,39 +1,34 @@
 # Melatonin Parameters
 
-This is a very basic C++ JUCE module that contains
+A very basic C++ JUCE module that contains
 
-1. A logarithmic `NormalizableRange` "factory" that accepts an exponent value to increase the amount of skew.
-2. `stringFromTimeValue` and `timeValueFromString` that behave in a user-friendly way.
+1. A logarithmic `NormalizableRange` "factory" that accepts an exponent value to toy with the amount of skew.
+2. `stringFromTimeValue` and `timeValueFromString` helpers for parameters that behave in a user-friendly way.
 3. Tests for the above written in [Catch2](https://github.com/catchorg/Catch2).
 
-These are the parameter behaviors I want by default a lot of the time. Something like this could also make sense in JUCE proper.
-
-When in doubt see the tests for behavior specifics.
+These are the parameter behaviors I want by defaulte. Something like this could also make sense in JUCE proper.
 
 ## How to use
 
-This is a juce module. 
+If you are a solo coder using Projucer, you could git clone and then manually add this module your project via the UI.
 
-If you are a solo coder using Projucer, you could git clone and then manually add the module your project via the UI.
-
-I'm not a fan of copying and pasting dependencies (IMO that's one of reasons we can't have nice things in C++). This will set you up with a git submodule tracking the `main` branch:
+I'm not a fan of copying and pasting dependencies (IMO that's one of reasons we can't have nice things in C++). So, assuming you use git for similar reasons, this will set you up with a git submodule tracking the `main` branch:
 ```
 git submodule add -b main https://github.com/sudara/melatonin_parameters
 git commit -m "Added melatonin_parameters submodule."
 ```
 
-When you want to update melatonin_parameters, you can run
+When you want to update melatonin_parameters, you can now run
 ```
-git submodule update --remote --merge melatonin_parameter
+git submodule update --remote --merge melatonin_parameters
 ```
 
-If you use CMake, inform JUCE about the module in your `CMakeLists.txt`:
+If you use CMake, you can inform JUCE about the module in your `CMakeLists.txt`:
 ```
 juce_add_module("modules/melatonin_parameters")
 ```
 
 zzzzzz.... Wake me up when C++ has widely supported package management plzthxbai.
-
 
 ## Running tests
 
@@ -55,14 +50,13 @@ where `Tests` is the name of your test binary.
 
 ### How to use
 
-
 With the default exponent setting of 6:
 
 ```cpp
 juce::AudioParameterFloat ("release", "Release", logarithmicRange (0, 15.0f), 0.1f),
 ```
 
-With a custom exponent (10 might be a sensible value for frequency):
+A custom exponent of 10 might be a sensible value for frequency:
 
 ```cpp
 juce::AudioParameterFloat ("frequency", "Frequency", logarithmicRange (20.0f, 20000.0f, 10.0f), 0.1f),
@@ -98,9 +92,9 @@ To a normalized 0-1 from an unnormalized y0 to y1
 
 </details>
 
-Understanding the implementation is a bit of a pain, but the core idea is to be able to translate to and from any logarithmic range to JUCE's normalized 0-1 range.
+Understanding the math is a bit of a pain, but the core idea is to be able to translate to and from any logarithmic range to JUCE's normalized 0-1 range.
 
-See the references for more detail. Solutions I ran into had oddities such as not allowing the logarithmic minimum to be 0, as it would result in division by 0. 
+See the references for more detail. Other solutions I ran into had oddities such as not allowing the logarithmic minimum to be 0 (as it would result in division by 0).
 
 I went back to the math to cook up something that I could understand, where the range could start at 0, and where the exponential-ness (skew) and starting positions could be adjusted.
 
@@ -123,8 +117,6 @@ This is is optimized for normal person usability, *not* for accuracy.
 1. Under 0.5s, values are displayed as ms with NO decimal places. It will look like `1ms`, `5ms`, etc.
 2. Excess 0s are removed. `1.00` is displayed as `1s`
 3. A max of two digits after the decimal place. `1.111` will display as `1.11`.
-
-
 
 ## timeValueFromString Implementation
 
