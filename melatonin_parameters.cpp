@@ -88,7 +88,7 @@ TEST_CASE ("timeValueFromString", "[parameters]")
         REQUIRE (timeValueFromString (".1ms") == Catch::Approx (0.0001f));
         REQUIRE (timeValueFromString ("0.1ms") == Catch::Approx (0.0001f));
         REQUIRE (timeValueFromString ("1ms") == 0.001f);
-        REQUIRE (timeValueFromString ("10ms") == 0.01f);
+        REQUIRE (timeValueFromString ("10ms") == Catch::Approx(0.01f));
         REQUIRE (timeValueFromString ("100ms") == 0.1f);
         REQUIRE (timeValueFromString ("1000ms") == 1.0f);
     }
@@ -111,7 +111,7 @@ TEST_CASE ("timeValueFromString", "[parameters]")
     SECTION ("assumes ms when no units specified and no decimal")
     {
         REQUIRE (timeValueFromString ("1") == 0.001f);
-        REQUIRE (timeValueFromString ("10") == 0.01f);
+        REQUIRE (timeValueFromString ("10") == Catch::Approx(0.01f));
         REQUIRE (timeValueFromString ("100") == 0.1f);
         REQUIRE (timeValueFromString ("1000") == 1.0f);
     }
