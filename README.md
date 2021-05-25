@@ -6,7 +6,7 @@ A very basic C++ JUCE module that contains
 2. `stringFromTimeValue` and `timeValueFromString` helpers for parameters that behave in a user-friendly way.
 3. Tests for the above written in [Catch2](https://github.com/catchorg/Catch2).
 
-These are the parameter behaviors I want by defaulte. Something like this could also make sense in JUCE proper.
+These are the parameter behaviors I want by default. Having something like this in JUCE proper probably makes sense.
 
 ## How to use
 
