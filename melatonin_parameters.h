@@ -40,6 +40,8 @@ static inline juce::NormalisableRange<float> logarithmicRange (float logStart, f
     };
 }
 
+// maximumStringLength is unused in this function
+// but must stay in place as it's the required signature for juce::AudioParameterFloat
 static inline auto stringFromTimeValue = [] (float value, int maximumStringLength = 5) {
     juce::String result;
 
@@ -96,5 +98,5 @@ static inline auto timeValueFromString = [] (const juce::String& text) {
 static inline auto decibelRange = juce::NormalisableRange<float> (
     -100.0f,
     0.0f,
-    [] (float start, float end, float gain) { return juce::Decibels::gainToDecibels (gain, start); },
-    [] (float start, float end, float dB) { return juce::Decibels::decibelsToGain (dB, start); });
+    [] (float start, float /* end*/, float gain) { return juce::Decibels::gainToDecibels (gain, start); },
+    [] (float start, float /* end*/, float dB) { return juce::Decibels::decibelsToGain (dB, start); });

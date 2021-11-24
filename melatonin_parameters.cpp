@@ -136,6 +136,8 @@ TEST_CASE ("stringFromTimeValue", "[parameters]")
         REQUIRE (stringFromTimeValue (1.11f) == "1.11s");
     }
 
+    // the second argument will be ignored in our implementation
+    // but is required for juce::AudioParameterFloat's constructor
     SECTION ("returns max two digits of precision on seconds when possible")
     {
         REQUIRE (stringFromTimeValue (1.11111f, 5) == "1.11s");
