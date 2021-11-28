@@ -32,10 +32,9 @@ static inline juce::NormalisableRange<float> logarithmicRange (float logStart, f
         },
         [=] (float start, float end, float unnormalised) {
             return std::log2 (((unnormalised - start) / (end - start) * (std::exp2 (exponent) - 1)) + 1) / exponent;
-            ;
         },
         [=] (float start, float end, float value) {
-            return juce::jlimit (start, end, juce::roundToInt (value * float (10000)) / float (10000));
+            return juce::jlimit (start, end, (float) juce::roundToInt (value * float (10000)) / float (10000));
         }
     };
 }
