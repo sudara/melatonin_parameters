@@ -1,8 +1,8 @@
 #if RUN_MELATONIN_TESTS
 
-#include "melatonin_parameters.h"
-#include <catch2/catch_all.hpp>
-#include <juce_core/juce_core.h>
+    #include "melatonin_parameters.h"
+    #include <catch2/catch_all.hpp>
+    #include <juce_core/juce_core.h>
 
 TEST_CASE ("logarithmicRange 0 to 1 with default curve", "[parameters]")
 {
@@ -88,7 +88,7 @@ TEST_CASE ("timeValueFromString", "[parameters]")
         REQUIRE (timeValueFromString (".1ms") == Catch::Approx (0.0001f));
         REQUIRE (timeValueFromString ("0.1ms") == Catch::Approx (0.0001f));
         REQUIRE (timeValueFromString ("1ms") == 0.001f);
-        REQUIRE (timeValueFromString ("10ms") == Catch::Approx(0.01f));
+        REQUIRE (timeValueFromString ("10ms") == Catch::Approx (0.01f));
         REQUIRE (timeValueFromString ("100ms") == 0.1f);
         REQUIRE (timeValueFromString ("1000ms") == 1.0f);
     }
@@ -111,7 +111,7 @@ TEST_CASE ("timeValueFromString", "[parameters]")
     SECTION ("assumes ms when no units specified and no decimal")
     {
         REQUIRE (timeValueFromString ("1") == 0.001f);
-        REQUIRE (timeValueFromString ("10") == Catch::Approx(0.01f));
+        REQUIRE (timeValueFromString ("10") == Catch::Approx (0.01f));
         REQUIRE (timeValueFromString ("100") == 0.1f);
         REQUIRE (timeValueFromString ("1000") == 1.0f);
     }
@@ -157,4 +157,46 @@ TEST_CASE ("stringFromTimeValue", "[parameters]")
         REQUIRE (stringFromTimeValue (0.11111f, 7) == "111ms");
     }
 }
+
+TEST_CASE ("stringFromAmplitudeValue", "[parameters]")
+{
+    SECTION ("Lowest value is -100db")
+    {
+        REQUIRE (stringFromAmplitudeValue (0.0f) == "-100.0db");
+    }
+
+    SECTION ("Highest value is -0db")
+    {
+        REQUIRE (stringFromAmplitudeValue (1.0f) == "0.0db");
+    }
+
+    SECTION ("Converts to db, max 1 decimal place")
+    {
+        REQUIRE (stringFromAmplitudeValue (0.5f) == "-6.0db");
+    }
+}
+
+TEST_CASE ("amplitudeFromString", "[parameters]")
+{
+    SECTION ("-100db converts to 0.0f")
+    {
+        REQUIRE (amplitudeFromString ("-100db") == 0.0f);
+    }
+
+    SECTION ("0db converts to 1.0f")
+    {
+        REQUIRE (amplitudeFromString ("0db") == 1.0f);
+    }
+
+    SECTION ("Converts to db when db unit label specified")
+    {
+        REQUIRE (amplitudeFromString ("-3db") == Catch::Approx(0.70795f));
+    }
+
+    SECTION ("Converts from db even when unit label not specified (no db written at end)")
+    {
+        REQUIRE (amplitudeFromString ("-3") == Catch::Approx(0.70795f));
+    }
+}
+
 #endif

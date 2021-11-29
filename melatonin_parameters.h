@@ -41,7 +41,8 @@ static inline juce::NormalisableRange<float> logarithmicRange (float logStart, f
 
 // maximumStringLength is unused in this function
 // but must stay in place as it's the required signature for juce::AudioParameterFloat
-static inline auto stringFromTimeValue = [] (float value, int maximumStringLength = 5) {
+static inline auto stringFromTimeValue = [] (float value, int maximumStringLength = 5)
+{
     juce::String result;
 
     if ((value < 0.0) || (value == 0.0))
@@ -70,7 +71,8 @@ static inline auto stringFromTimeValue = [] (float value, int maximumStringLengt
 // The value can either be 0ms, 11.1ms, 100ms, 1.0s, 15.98s
 // The values can also come in without labels
 // In that case, single digits or a decimal place will trigger seconds conversion
-static inline auto timeValueFromString = [] (const juce::String& text) {
+static inline auto timeValueFromString = [] (const juce::String& text)
+{
     float value;
     if (text.endsWith ("ms"))
     {
@@ -90,6 +92,22 @@ static inline auto timeValueFromString = [] (const juce::String& text) {
     }
     return value;
 };
+
+static inline auto stringFromAmplitudeValue = [] (float value, int maximumStringLength = 5)
+{
+    // only 1 decimal place for db values
+    return juce::String (juce::Decibels::gainToDecibels (value), 1) + "db";
+};
+
+static inline auto amplitudeFromString = [] (const juce::String& text)
+{
+    if (text.endsWith ("db"))
+    {
+        return juce::Decibels::decibelsToGain (text.dropLastCharacters (2).getFloatValue());
+    }
+    else return juce::Decibels::decibelsToGain (text.getFloatValue());
+};
+
 
 // https://forum.juce.com/t/decibels-in-normalisablerange-using-lambdas/26379
 // https://github.com/juce-framework/JUCE/blob/master/modules/juce_audio_basics/utilities/juce_Decibels.h
