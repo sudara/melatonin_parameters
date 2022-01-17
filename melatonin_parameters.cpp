@@ -54,7 +54,7 @@ TEST_CASE ("logarithmicRange 0 to 1 with default curve", "[parameters]")
     }
 }
 
-TEST_CASE ("logarithmicRange 0 to 441000 with exponent of 10", "[parameters]")
+TEST_CASE ("logarithmicRange 0 to 44100 with exponent of 10", "[parameters]")
 {
     auto range = logarithmicRange (0.0f, 44100.0f, 10);
 
