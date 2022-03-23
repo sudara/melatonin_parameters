@@ -58,10 +58,6 @@ static inline auto stringFromTimeValue = [] (float value, [[maybe_unused]] int m
     else
     {
         auto rawResult = juce::String (value, 2);
-        if (rawResult.endsWith (".00"))
-            rawResult = rawResult.dropLastCharacters (3);
-        if (rawResult.contains (".") && rawResult.endsWith ("0"))
-            rawResult = rawResult.dropLastCharacters (1);
         result = rawResult + "s";
     }
 

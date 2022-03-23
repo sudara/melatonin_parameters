@@ -127,19 +127,23 @@ TEST_CASE ("stringFromTimeValue", "[parameters]")
         REQUIRE (stringFromTimeValue (0.499f) == "499ms");
     }
 
-    SECTION ("returns s over .5s, remove 0s from decimal")
+    SECTION ("returns s over .5s, always has 2 digits of precision")
     {
-        REQUIRE (stringFromTimeValue (0.5f) == "0.5s");
-        REQUIRE (stringFromTimeValue (0.6f) == "0.6s");
-        REQUIRE (stringFromTimeValue (1.0f) == "1s");
-        REQUIRE (stringFromTimeValue (1.1f) == "1.1s");
+        REQUIRE (stringFromTimeValue (0.5f) == "0.50s");
+        REQUIRE (stringFromTimeValue (0.6f) == "0.60s");
+        REQUIRE (stringFromTimeValue (1.0f) == "1.00s");
+        REQUIRE (stringFromTimeValue (1.1f) == "1.10s");
         REQUIRE (stringFromTimeValue (1.11f) == "1.11s");
     }
 
     // the second argument will be ignored in our implementation
     // but is required for juce::AudioParameterFloat's constructor
-    SECTION ("returns max two digits of precision on seconds when possible")
+    SECTION ("returns exactly two digits of precision on seconds")
     {
+        REQUIRE (stringFromTimeValue (1.f, 6) == "1.00s");
+        REQUIRE (stringFromTimeValue (1.1f, 5) == "1.10s");
+
+
         REQUIRE (stringFromTimeValue (1.11111f, 5) == "1.11s");
         REQUIRE (stringFromTimeValue (1.11111f, 6) == "1.11s");
 
