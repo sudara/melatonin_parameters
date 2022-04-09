@@ -39,7 +39,8 @@ Assuming you use CMake:
 1. Have Catch2 setup in your project. See [pamplejuce](https://github.com/sudara/pamplejuce).
    
 2. Add the module as above
-2. Add the preprocessor flag to the test binary with: 
+
+3. Add the preprocessor flag to the test binary with: 
    
 `target_compile_definitions(Tests PRIVATE RUN_MELATONIN_TESTS=1)` 
 
