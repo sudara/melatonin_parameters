@@ -41,8 +41,7 @@ static inline juce::NormalisableRange<float> logarithmicRange (float logStart, f
 
 // maximumStringLength is unused in this function
 // but must stay in place as it's the required signature for juce::AudioParameterFloat
-static inline auto stringFromTimeValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5)
-{
+static inline auto stringFromTimeValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
     juce::String result;
 
     if ((value < 0.0) || (value == 0.0))
@@ -67,8 +66,7 @@ static inline auto stringFromTimeValue = [] (float value, [[maybe_unused]] int m
 // The value can either be 0ms, 11.1ms, 100ms, 1.0s, 15.98s
 // The values can also come in without labels
 // In that case, single digits or a decimal place will trigger seconds conversion
-static inline auto timeValueFromString = [] (const juce::String& text)
-{
+static inline auto timeValueFromString = [] (const juce::String& text) {
     float value;
     if (text.endsWith ("ms"))
     {
@@ -89,27 +87,56 @@ static inline auto timeValueFromString = [] (const juce::String& text)
     return value;
 };
 
-static inline auto stringFromAmplitudeValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5)
-{
+static inline auto stringFromDBValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
     // only 1 decimal place for db values
-    return juce::String (juce::Decibels::gainToDecibels (value), 1) + "db";
+    return juce::String (value, 1) + "db";
 };
 
-static inline auto amplitudeFromString = [] (const juce::String& text)
-{
+static inline auto dBFromString = [] (const juce::String& text) {
     if (text.endsWith ("db"))
     {
-        return juce::Decibels::decibelsToGain (text.dropLastCharacters (2).getFloatValue());
+        return text.dropLastCharacters (2).getFloatValue();
     }
-    else return juce::Decibels::decibelsToGain (text.getFloatValue());
+    else
+        return text.getFloatValue();
 };
 
+/* This creates a range for a particular harmonic
+ *
+ * This stuff can sometimes feel a bit tricky or blurry, here are some tips:
+ *  * The normalized range of 0-1 is always the same, think of it as "the full range of a knob"
+ *  * What changes is the *output*, which is also what's stored by JUCE as the parameter value
+ *  * This output is then fed through the optional string functions.
+ *
+ *  You could do further conversions via the string functions, for example, to provide 2 representations to the user.
+ */
+static inline juce::NormalisableRange<float> decibelRange (size_t harmonicNumber)
+{
+    float maxGainForHarmonic = 1.0f / (float) harmonicNumber;
+    return {
+        -100.0f,
+        // The max gain for any given harmonic is 1/f
+        juce::Decibels::gainToDecibels (maxGainForHarmonic, -100.0f),
 
-// https://forum.juce.com/t/decibels-in-normalisablerange-using-lambdas/26379
-// https://github.com/juce-framework/JUCE/blob/master/modules/juce_audio_basics/utilities/juce_Decibels.h
+        // convertFrom0to1
+        [=] (float start, float end, float normalizedGain)
+        {
+            // Makes sure we're scaling logarithmically
+            auto scaledDB = normalizedGain * juce::Decibels::decibelsToGain<float> (end, start);
+            return juce::Decibels::gainToDecibels<float> (scaledDB);
+        },
 
-static inline auto decibelRange = juce::NormalisableRange<float> (
-    -100.0f,
-    0.0f,
-    [] (float start, float /* end*/, float gain) { return juce::Decibels::gainToDecibels (gain, start); },
-    [] (float start, float /* end*/, float dB) { return juce::Decibels::decibelsToGain (dB, start); });
+        // convertTo0to1
+        [=] (float start, float end, float dB)
+        {
+            auto unnoramlizedValue = juce::Decibels::decibelsToGain<float> (dB, start);
+            return juce::jmin (1.0f, unnoramlizedValue / juce::Decibels::decibelsToGain (end, start));
+        }
+    };
+}
+
+// This is a generic gain <-> decibel range
+static inline juce::NormalisableRange<float> decibelRange()
+{
+    return decibelRange (1);
+}

@@ -81,6 +81,56 @@ TEST_CASE ("logarithmicRange 0 to 44100 with exponent of 10", "[parameters]")
     }
 }
 
+TEST_CASE ("decibelRange", "[parameters]")
+{
+    SECTION ("unnormalized db values range from -100 to 0")
+    {
+        auto range = decibelRange();
+        REQUIRE (range.convertFrom0to1 (0.0f) == -100.f);
+        REQUIRE (range.convertFrom0to1 (1.0f) == 0.0f);
+
+        REQUIRE (range.convertTo0to1 (-100.f) == 0.0f);
+        REQUIRE (range.convertTo0to1 (0.0f) == 1.0f);
+    }
+
+    SECTION ("handles out of bounds input")
+    {
+        auto range = decibelRange();
+        REQUIRE (range.convertTo0to1 (-120.f) == 0.0f);
+    }
+
+    SECTION ("for a harmonic")
+    {
+        auto range2 = decibelRange (2);
+        auto range3 = decibelRange (3);
+
+        SECTION ("caps the max gain at 1/f, where f is the harmonic number")
+        {
+            REQUIRE (range2.convertFrom0to1 (0.0f) == -100.f);
+            REQUIRE (range2.convertFrom0to1 (1.0f) == Catch::Approx (-6.0206f));
+
+            REQUIRE (range3.convertFrom0to1 (0.0f) == -100.f);
+            REQUIRE (range3.convertFrom0to1 (1.0f) == Catch::Approx (-9.5424f));
+        }
+
+        SECTION ("uses the full normalized range of 0 to 1 for the harmonic")
+        {
+            REQUIRE (range2.convertTo0to1 (-100.f) == 0.0f);
+            REQUIRE (range2.convertTo0to1 (-6.0206f) == Catch::Approx (1.0f));
+
+            REQUIRE (range3.convertTo0to1 (-100.f) == 0.0f);
+            REQUIRE (range3.convertTo0to1 (-9.5424f) == Catch::Approx (1.0f));
+        }
+
+        SECTION ("actually behaves logarithmically, regardless of harmonic number")
+        {
+            REQUIRE (range2.convertFrom0to1 (0.5f) == Catch::Approx (-12.0412f)); // 0.25 gain
+
+            REQUIRE (range3.convertFrom0to1 (0.5f) == Catch::Approx (-15.56302f)); // 0.16667 gain
+        }
+    }
+}
+
 TEST_CASE ("timeValueFromString", "[parameters]")
 {
     SECTION ("converts ms correctly")
@@ -143,7 +193,6 @@ TEST_CASE ("stringFromTimeValue", "[parameters]")
         REQUIRE (stringFromTimeValue (1.f, 6) == "1.00s");
         REQUIRE (stringFromTimeValue (1.1f, 5) == "1.10s");
 
-
         REQUIRE (stringFromTimeValue (1.11111f, 5) == "1.11s");
         REQUIRE (stringFromTimeValue (1.11111f, 6) == "1.11s");
 
@@ -162,44 +211,48 @@ TEST_CASE ("stringFromTimeValue", "[parameters]")
     }
 }
 
-TEST_CASE ("stringFromAmplitudeValue", "[parameters]")
+TEST_CASE ("stringFromDBValue", "[parameters]")
 {
     SECTION ("Lowest value is -100db")
     {
-        REQUIRE (stringFromAmplitudeValue (0.0f) == "-100.0db");
+        REQUIRE (stringFromDBValue (-100.0f) == "-100.0db");
     }
 
     SECTION ("Highest value is -0db")
     {
-        REQUIRE (stringFromAmplitudeValue (1.0f) == "0.0db");
+        REQUIRE (stringFromDBValue (0.0f) == "0.0db");
     }
 
-    SECTION ("Converts to db, max 1 decimal place")
+    SECTION ("Converts to db, max 1 decimal places")
     {
-        REQUIRE (stringFromAmplitudeValue (0.5f) == "-6.0db");
+        REQUIRE (stringFromDBValue (-6.123f) == "-6.1db");
     }
 }
 
-TEST_CASE ("amplitudeFromString", "[parameters]")
+TEST_CASE ("dBFromString", "[parameters]")
 {
     SECTION ("-100db converts to 0.0f")
     {
-        REQUIRE (amplitudeFromString ("-100db") == 0.0f);
+        REQUIRE (dBFromString ("-100db") == -100.0f);
+        REQUIRE (dBFromString ("-100.00db") == -100.0f);
     }
 
     SECTION ("0db converts to 1.0f")
     {
-        REQUIRE (amplitudeFromString ("0db") == 1.0f);
+        REQUIRE (dBFromString ("0db") == 0.0f);
+        REQUIRE (dBFromString ("0.0db") == 0.0f);
     }
 
     SECTION ("Converts to db when db unit label specified")
     {
-        REQUIRE (amplitudeFromString ("-3db") == Catch::Approx(0.70795f));
+        REQUIRE (dBFromString ("-3db") == -3.0f);
     }
 
     SECTION ("Converts from db even when unit label not specified (no db written at end)")
     {
-        REQUIRE (amplitudeFromString ("-3") == Catch::Approx(0.70795f));
+        REQUIRE (dBFromString ("-3") == -3.0f);
+        REQUIRE (dBFromString ("-3.1") == -3.1f);
+        REQUIRE (dBFromString ("-3.12") == -3.12f);
     }
 }
 
