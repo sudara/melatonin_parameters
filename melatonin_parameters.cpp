@@ -80,7 +80,6 @@ TEST_CASE ("logarithmicRange 0 to 44100 with exponent of 10", "[parameters]")
         REQUIRE (range.convertTo0to1 (4410.f) == Catch::Approx (0.66907f));
     }
 }
-
 TEST_CASE ("decibelRange", "[parameters]")
 {
     SECTION ("unnormalized db values range from -100 to 0")
@@ -99,18 +98,18 @@ TEST_CASE ("decibelRange", "[parameters]")
         REQUIRE (range.convertTo0to1 (-120.f) == 0.0f);
     }
 
+    //  See docs/Per harmonic db ranges.numbers for example values
     SECTION ("for a harmonic")
     {
         auto range2 = decibelRange (2);
         auto range3 = decibelRange (3);
+        auto range10 = decibelRange (10);
 
         SECTION ("caps the max gain at 1/f, where f is the harmonic number")
         {
-            REQUIRE (range2.convertFrom0to1 (0.0f) == -100.f);
-            REQUIRE (range2.convertFrom0to1 (1.0f) == Catch::Approx (-6.0206f));
-
-            REQUIRE (range3.convertFrom0to1 (0.0f) == -100.f);
-            REQUIRE (range3.convertFrom0to1 (1.0f) == Catch::Approx (-9.5424f));
+            REQUIRE (range2.convertFrom0to1 (1.0f) == Catch::Approx (juce::Decibels::gainToDecibels(0.5f)));
+            REQUIRE (range3.convertFrom0to1 (1.0f) == Catch::Approx (juce::Decibels::gainToDecibels(0.3333333f)));
+            REQUIRE (range10.convertFrom0to1 (1.0f) == Catch::Approx (juce::Decibels::gainToDecibels(0.1f)));
         }
 
         SECTION ("uses the full normalized range of 0 to 1 for the harmonic")
@@ -122,11 +121,17 @@ TEST_CASE ("decibelRange", "[parameters]")
             REQUIRE (range3.convertTo0to1 (-9.5424f) == Catch::Approx (1.0f));
         }
 
-        SECTION ("actually behaves logarithmically, regardless of harmonic number")
+        SECTION ("normalized range results in unique db scale per harmonic")
         {
-            REQUIRE (range2.convertFrom0to1 (0.5f) == Catch::Approx (-12.0412f)); // 0.25 gain
+            REQUIRE (range2.convertFrom0to1 (1.0f) == Catch::Approx (-6.0206));
+            REQUIRE (range2.convertFrom0to1 (0.5f) == Catch::Approx (-12.0412f));
+            REQUIRE (range2.convertFrom0to1 (0.1f) == Catch::Approx (-26.0206f));
+            REQUIRE (range2.convertFrom0to1 (0.01f) == Catch::Approx (-46.021f));
 
-            REQUIRE (range3.convertFrom0to1 (0.5f) == Catch::Approx (-15.56302f)); // 0.16667 gain
+            REQUIRE (range3.convertFrom0to1 (1.0f) == Catch::Approx (-9.54243f));
+            REQUIRE (range3.convertFrom0to1 (0.5f) == Catch::Approx (-15.563f));
+            REQUIRE (range3.convertFrom0to1 (0.1f) == Catch::Approx (-29.54243f));
+            REQUIRE (range3.convertFrom0to1 (0.01f) == Catch::Approx (-49.54243f));
         }
     }
 }

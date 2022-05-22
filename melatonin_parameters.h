@@ -109,6 +109,8 @@ static inline auto dBFromString = [] (const juce::String& text) {
  *  * This output is then fed through the optional string functions.
  *
  *  You could do further conversions via the string functions, for example, to provide 2 representations to the user.
+ *
+ *  https://forum.juce.com/t/decibels-in-normalisablerange-using-lambdas/26379/6
  */
 static inline juce::NormalisableRange<float> decibelRange (size_t harmonicNumber)
 {
@@ -119,18 +121,14 @@ static inline juce::NormalisableRange<float> decibelRange (size_t harmonicNumber
         juce::Decibels::gainToDecibels (maxGainForHarmonic, -100.0f),
 
         // convertFrom0to1
-        [=] (float start, float end, float normalizedGain)
-        {
-            // Makes sure we're scaling logarithmically
-            auto scaledDB = normalizedGain * juce::Decibels::decibelsToGain<float> (end, start);
-            return juce::Decibels::gainToDecibels<float> (scaledDB);
+        [=] (float min, float max, float normalizedGain) {
+            return juce::Decibels::gainToDecibels<float> (normalizedGain / (float) harmonicNumber, min);
         },
 
         // convertTo0to1
-        [=] (float start, float end, float dB)
-        {
-            auto unnoramlizedValue = juce::Decibels::decibelsToGain<float> (dB, start);
-            return juce::jmin (1.0f, unnoramlizedValue / juce::Decibels::decibelsToGain (end, start));
+        [=] (float min, float max, float dB) {
+            // This can sometimes result in a number just barely above 1.0f
+            return juce::jmin (1.0f, (float) harmonicNumber * juce::Decibels::decibelsToGain (dB, min));
         }
     };
 }
