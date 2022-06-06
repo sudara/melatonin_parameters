@@ -46,7 +46,7 @@ static inline auto stringFromTimeValue = [] (float value, [[maybe_unused]] int m
 
     if ((value < 0.0) || (value == 0.0))
     {
-        result = juce::String ("Oms");
+        result = juce::String ("0ms");
     }
     else if (value < 0.5)
     {

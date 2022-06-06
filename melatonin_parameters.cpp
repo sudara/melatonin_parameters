@@ -176,6 +176,7 @@ TEST_CASE ("stringFromTimeValue", "[parameters]")
 {
     SECTION ("returns ms under 1s, removes 0s from decimal")
     {
+        REQUIRE (stringFromTimeValue (0.f) == "0ms");
         REQUIRE (stringFromTimeValue (0.001f) == "1ms");
         REQUIRE (stringFromTimeValue (0.01f) == "10ms");
         REQUIRE (stringFromTimeValue (0.1f) == "100ms");
