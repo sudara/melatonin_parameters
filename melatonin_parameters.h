@@ -112,13 +112,14 @@ static inline auto dBFromString = [] (const juce::String& text) {
  *
  *  https://forum.juce.com/t/decibels-in-normalisablerange-using-lambdas/26379/6
  */
-static inline juce::NormalisableRange<float> decibelRange (size_t harmonicNumber)
+static inline juce::NormalisableRange<float> decibelRange (size_t harmonicNumber, float minimum=-100.f)
 {
+    jassert(minimum < 0.0f);
     float maxGainForHarmonic = 1.0f / (float) harmonicNumber;
     return {
-        -100.0f,
+        minimum,
         // The max gain for any given harmonic is 1/f
-        juce::Decibels::gainToDecibels (maxGainForHarmonic, -100.0f),
+        juce::Decibels::gainToDecibels (maxGainForHarmonic, minimum),
 
         // convertFrom0to1
         [=] (float min, float max, float normalizedGain) {
