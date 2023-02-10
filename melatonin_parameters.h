@@ -1,4 +1,4 @@
-/* 
+/*
 BEGIN_JUCE_MODULE_DECLARATION
 
  ID:               melatonin_parameters
@@ -38,6 +38,25 @@ static inline juce::NormalisableRange<float> logarithmicRange (float logStart, f
         }
     };
 }
+
+static inline juce::NormalisableRange<float> reversedLogarithmicRange (float logStart, float logEnd, float exponent = 6.0f)
+{
+    return {
+        logStart, logEnd,
+        // In all the following, "start" and "end" describe the unnormalized range
+        // for example 0 to 15 or 0 to 100.
+        [=] (float start, float end, float normalised) {
+            return start + (std::exp2 ((1.0 - normalised) * exponent) - 1) * (end - start) / (std::exp2 (exponent) - 1);
+        },
+        [=] (float start, float end, float unnormalised) {
+            return 1.0f - std::log2 (((unnormalised - start) / (end - start) * (std::exp2 (exponent) - 1)) + 1) / exponent;
+        },
+        [=] (float start, float end, float value) {
+            return juce::jlimit (start, end, (float) juce::roundToInt (value * float (10000)) / float (10000));
+        }
+    };
+}
+
 
 // maximumStringLength is unused in this function
 // but must stay in place as it's the required signature for juce::AudioParameterFloat

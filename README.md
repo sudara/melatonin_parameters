@@ -48,10 +48,7 @@ where `Tests` is the name of your test binary.
 
 ## Logarithmic Range
 
-
-### How to use
-
-With the default exponent setting of 6:
+It has a default exponent setting of 6:
 
 ```cpp
 juce::AudioParameterFloat ("release", "Release", logarithmicRange (0, 15.0f), 0.1f),
@@ -63,6 +60,13 @@ A custom exponent of 10 might be a sensible value for frequency:
 juce::AudioParameterFloat ("frequency", "Frequency", logarithmicRange (20.0f, 20000.0f, 10.0f), 0.1f),
 ```
 
+## Reversed Logarithmic Range
+
+When you want the slider to be reversed in direction. The arguments are still in the same order, lowest possibility first.
+
+```cpp
+juce::AudioParameterFloat ("release", "Release", reversedLogarithmicRange (0, 15.0f), 0.1f),
+```
 
 ### Why
 

@@ -1,7 +1,8 @@
 #if RUN_MELATONIN_TESTS
 
     #include "melatonin_parameters.h"
-    #include <catch2/catch_all.hpp>
+    #include <catch2/catch_test_macros.hpp>
+    #include <catch2/catch_approx.hpp>
     #include <juce_core/juce_core.h>
 
 TEST_CASE ("logarithmicRange 0 to 1 with default curve", "[parameters]")
@@ -54,6 +55,58 @@ TEST_CASE ("logarithmicRange 0 to 1 with default curve", "[parameters]")
     }
 }
 
+TEST_CASE ("reversedLogarithimicRange 0 to 10 with default curve", "[parameters]")
+{
+    auto range = reversedLogarithmicRange (0.0f, 10.0f);
+
+    SECTION ("handles 0 perfectly")
+    {
+        REQUIRE (range.convertTo0to1 (0.0f) == 1.0f);
+        REQUIRE (range.convertFrom0to1 (1.0f) == 0.0f);
+    }
+
+    SECTION ("handles 10 perfectly")
+    {
+        REQUIRE (range.convertTo0to1 (10.0f) == 0.0f);
+        REQUIRE (range.convertFrom0to1 (0.0f) == 10.0f);
+    }
+
+    SECTION ("converts a linear to reversed logarithmic")
+    {
+        CHECK (range.convertFrom0to1 (0.9f) == Catch::Approx (0.0819f).margin (0.0001f));
+        CHECK (range.convertFrom0to1 (0.8f) == Catch::Approx (0.2059f).margin (0.0001f));
+        CHECK (range.convertFrom0to1 (0.5f) == Catch::Approx (1.1111f).margin (0.0001f));
+        CHECK (range.convertFrom0to1 (0.1f) == Catch::Approx (6.5435f).margin (0.0001f));
+        CHECK (range.convertFrom0to1 (0.01f) == Catch::Approx (9.58617f).margin (0.0001f));
+    }
+
+    SECTION ("converts a reversed logarithmic range to linear")
+    {
+        CHECK (range.convertTo0to1 (0.001f) == Catch::Approx (0.99849f));
+        CHECK (range.convertTo0to1 (0.01f) == Catch::Approx (0.98531));
+        CHECK (range.convertTo0to1 (1.0f) == Catch::Approx (0.52202f));
+        CHECK (range.convertTo0to1 (2.0f) == Catch::Approx (0.37241f));
+        CHECK (range.convertTo0to1 (5.0f) == Catch::Approx (0.16294f));
+        CHECK (range.convertTo0to1 (9.0f) == Catch::Approx (0.02492f).margin(0.0001f));
+        CHECK (range.convertTo0to1 (9.9f) == Catch::Approx (0.00238f).margin(0.0001f));
+    }
+
+    SECTION ("converting to and from results in the original value (no drifting or feedback loop)")
+    {
+        REQUIRE (range.convertFrom0to1 (range.convertTo0to1 (0.01f)) == Catch::Approx (0.01f));
+        REQUIRE (range.convertTo0to1 (range.convertFrom0to1 (0.01f)) == Catch::Approx (0.01f));
+
+        REQUIRE (range.convertFrom0to1 (range.convertTo0to1 (0.1f)) == Catch::Approx (0.1f));
+        REQUIRE (range.convertTo0to1 (range.convertFrom0to1 (0.1f)) == Catch::Approx (0.1f));
+
+        REQUIRE (range.convertFrom0to1 (range.convertTo0to1 (0.5f)) == Catch::Approx (0.5f));
+        REQUIRE (range.convertTo0to1 (range.convertFrom0to1 (0.5f)) == Catch::Approx (0.5f));
+
+        REQUIRE (range.convertFrom0to1 (range.convertTo0to1 (0.9f)) == Catch::Approx (0.9f));
+        REQUIRE (range.convertTo0to1 (range.convertFrom0to1 (0.9f)) == Catch::Approx (0.9f));
+    }
+}
+
 TEST_CASE ("logarithmicRange 0 to 44100 with exponent of 10", "[parameters]")
 {
     auto range = logarithmicRange (0.0f, 44100.0f, 10);
@@ -80,6 +133,7 @@ TEST_CASE ("logarithmicRange 0 to 44100 with exponent of 10", "[parameters]")
         REQUIRE (range.convertTo0to1 (4410.f) == Catch::Approx (0.66907f));
     }
 }
+
 TEST_CASE ("decibelRange", "[parameters]")
 {
     SECTION ("unnormalized db values range from -100 to 0")
