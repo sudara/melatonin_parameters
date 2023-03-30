@@ -51,18 +51,15 @@ static inline juce::NormalisableRange<float> reversedLogarithmicRange (float log
     };
 }
 
-
 static inline juce::NormalisableRange<float> intRangeWithMidPoint (int min, int max, int midpoint)
 {
-
     float linearSkew = 2 * (((float) midpoint - (float) min) / ((float) max - (float) min));
 
     auto range = juce::NormalisableRange<float> {
         (float) min, (float) max,
 
         // from0to1
-        [=] (float start, float end, float normalized)
-        {
+        [=] (float start, float end, float normalized) {
             if (normalized <= 0.5)
                 return juce::jlimit (start, end, normalized * linearSkew * (end - start) + start);
             else
@@ -70,8 +67,7 @@ static inline juce::NormalisableRange<float> intRangeWithMidPoint (int min, int 
         },
 
         // to0to1
-        [=] (float start, float end, float unnormalized)
-        {
+        [=] (float start, float end, float unnormalized) {
             if (unnormalized <= (float) midpoint)
             {
                 return juce::jlimit (0.0f, 1.0f, (unnormalized - start) / ((float) midpoint - start) / 2);
@@ -86,10 +82,9 @@ static inline juce::NormalisableRange<float> intRangeWithMidPoint (int min, int 
         [] (float start, float end, float v) { return (float) juce::roundToInt (juce::jlimit (start, end, v)); }
     };
 
-     range.setSkewForCentre ((float) midpoint);
-     return range;
+    range.setSkewForCentre ((float) midpoint);
+    return range;
 }
-
 
 // maximumStringLength is unused in this function
 // but must stay in place as it's the required signature for juce::AudioParameterFloat
@@ -164,7 +159,7 @@ static inline auto intValueFromString = [] (const juce::String& text) {
 static inline auto stringFromPercentValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
     // we want 0 significant digits, but this juce string helper is odd...
     // so we have to make one decimal place, then drop that and the decimal char
-    return juce::String (value * 100.0f, 1).dropLastCharacters(2) + "%";
+    return juce::String (value * 100.0f, 1).dropLastCharacters (2) + "%";
 };
 
 static inline auto percentValueFromString = [] (const juce::String& text) {
@@ -176,6 +171,23 @@ static inline auto percentValueFromString = [] (const juce::String& text) {
         return text.getFloatValue() / 100.0f;
 };
 
+static inline auto stringFromHzValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
+    if (value < 2.0f)
+        return juce::String (value, 2) + "Hz";
+    if (value < 10.0f)
+        return juce::String (value, 1) + "Hz";
+    else
+        return juce::String (value, 1).dropLastCharacters(2) + "Hz";
+};
+
+static inline auto hzValueFromString = [] (const juce::String& text) {
+    if (text.endsWith ("Hz") || (text.endsWith ("hz")))
+    {
+        return text.dropLastCharacters (2).getFloatValue();
+    }
+    else
+        return text.getFloatValue();
+};
 
 /* This creates a range for a particular harmonic
  *
