@@ -83,6 +83,7 @@ static inline juce::NormalisableRange<float> intRangeWithMidPoint (int min, int 
     };
 
     range.setSkewForCentre ((float) midpoint);
+    range.interval = 1.0f;
     return range;
 }
 
@@ -167,8 +168,7 @@ static inline auto percentValueFromString = [] (const juce::String& text) {
     {
         return text.dropLastCharacters (1).getFloatValue() / 100.0f;
     }
-    else
-        return text.getFloatValue() / 100.0f;
+    return text.getFloatValue() / 100.0f;
 };
 
 static inline auto stringFromHzValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
@@ -176,8 +176,8 @@ static inline auto stringFromHzValue = [] (float value, [[maybe_unused]] int max
         return juce::String (value, 2) + "Hz";
     if (value < 10.0f)
         return juce::String (value, 1) + "Hz";
-    else
-        return juce::String (value, 1).dropLastCharacters(2) + "Hz";
+
+    return juce::String (value, 1).dropLastCharacters (2) + "Hz";
 };
 
 static inline auto hzValueFromString = [] (const juce::String& text) {
@@ -185,8 +185,15 @@ static inline auto hzValueFromString = [] (const juce::String& text) {
     {
         return text.dropLastCharacters (2).getFloatValue();
     }
-    else
-        return text.getFloatValue();
+    return text.getFloatValue();
+};
+
+static inline auto stringFrom0to1 = [] (float value, [[maybe_unused]] int maximumStringLength = 4) {
+    return juce::String (value, maximumStringLength);
+};
+
+static inline auto zeroTo1FromString = [] (const juce::String& text) {
+    return text.getFloatValue();
 };
 
 /* This creates a range for a particular harmonic
