@@ -105,3 +105,64 @@ static inline juce::NormalisableRange<float> intRangeWithMidPoint (int min, int 
     range.interval = 1.0f;
     return range;
 }
+
+/* This creates a range for a particular harmonic
+ *
+ * This stuff can sometimes feel a bit tricky or blurry, here are some tips:
+ *  * The normalized range of 0-1 is always the same, think of it as "the full range of a knob"
+ *  * What changes is the *output*, which is also what's stored by JUCE as the parameter value
+ *  * This output is then fed through the optional string functions.
+ *
+ *  You could do further conversions via the string functions, for example, to provide 2 representations to the user.
+ *
+ *  https://forum.juce.com/t/decibels-in-normalisablerange-using-lambdas/26379/6
+ */
+static inline juce::NormalisableRange<float> decibelRangeForHarmonic (size_t harmonicNumber, float minimum = -100.f)
+{
+    jassert (minimum < 0.0f);
+    float maxGainForHarmonic = 1.0f / (float) harmonicNumber;
+    return {
+        minimum,
+        // The max gain for any given harmonic is 1/f
+        juce::Decibels::gainToDecibels (maxGainForHarmonic, minimum),
+
+        // convertFrom0to1
+        [=] (float min, float max, float normalizedGain) {
+            return juce::Decibels::gainToDecibels<float> (normalizedGain / (float) harmonicNumber, min);
+        },
+
+        // convertTo0to1
+        [=] (float min, float max, float dB) {
+            // This can sometimes result in a number just barely above 1.0f
+            return juce::jmin (1.0f, (float) harmonicNumber * juce::Decibels::decibelsToGain (dB, min));
+        }
+    };
+}
+
+// This is a generic gain <-> decibel range
+static inline juce::NormalisableRange<float> decibelRange()
+{
+    return decibelRangeForHarmonic (1);
+}
+
+static inline juce::NormalisableRange<float> decibelRange (float minimum, float maximum)
+{
+    jassert (minimum < 0.0f);
+
+    return {
+        minimum,
+        maximum,
+        [=] (float min, float max, float normalized) {
+            auto minAmp = std::pow (10.0f, min / 20.0f);
+            auto maxAmp = std::pow (10.0f, max / 20.0f);
+            auto amp    = minAmp * std::pow (maxAmp / minAmp, normalized);
+            return 20.0f * std::log10 (amp);
+        },
+        [=] (float min, float max, float dB) {
+            auto minAmp = std::pow (10.0f, min / 20.0f);
+            auto maxAmp = std::pow (10.0f, max / 20.0f);
+            auto amp    = std::pow (10.0f, dB / 20.0f);
+            return std::log (amp / minAmp) / std::log (maxAmp / minAmp);
+        }
+    };
+}

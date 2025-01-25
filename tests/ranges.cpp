@@ -128,11 +128,11 @@ TEST_CASE ("Melatonin Parameters Ranges")
             REQUIRE (range.convertTo0to1 (4410.f) == Catch::Approx (0.66907f));
         }
 
-        SECTION ("decibelRange", "[parameters]")
+        SECTION ("decibelRangeForHarmonic", "[parameters]")
         {
             SECTION ("unnormalized db values range from -100 to 0")
             {
-                auto range = decibelRange();
+                auto range = decibelRangeForHarmonic(1);
                 REQUIRE (range.convertFrom0to1 (0.0f) == -100.f);
                 REQUIRE (range.convertFrom0to1 (1.0f) == 0.0f);
 
@@ -142,16 +142,16 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
             SECTION ("handles out of bounds input")
             {
-                auto range = decibelRange();
+                auto range = decibelRangeForHarmonic(1);
                 REQUIRE (range.convertTo0to1 (-120.f) == 0.0f);
             }
 
             //  See docs/Per harmonic db ranges.numbers for example values
             SECTION ("for a harmonic")
             {
-                auto range2 = decibelRange (2);
-                auto range3 = decibelRange (3);
-                auto range10 = decibelRange (10);
+                auto range2 = decibelRangeForHarmonic (2);
+                auto range3 = decibelRangeForHarmonic (3);
+                auto range10 = decibelRangeForHarmonic (10);
 
                 SECTION ("caps the max gain at 1/f, where f is the harmonic number")
                 {
@@ -259,9 +259,68 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
             SECTION ("handles 1 perfectly")
             {
-                REQUIRE (range.convertTo0to1 (10000.f) == Catch::Approx(1.0f));
+                REQUIRE (range.convertTo0to1 (10000.f) == Catch::Approx (1.0f));
                 REQUIRE (range.convertFrom0to1 (1.0f) == 10000.f);
             }
+        }
+    }
+
+    SECTION ("decibelRange -30 to 0")
+    {
+        auto range = decibelRange (-30.0f, 0.0f);
+
+        SECTION ("Boundaries")
+        {
+            REQUIRE (range.convertFrom0to1 (0.0f) == Catch::Approx (-30.0f).margin (0.001f));
+
+            // still close to -30
+            REQUIRE (range.convertFrom0to1 (0.0001f) == Catch::Approx (-30.0f).margin (0.01f));
+
+
+            REQUIRE (range.convertFrom0to1 (1.0f) == Catch::Approx (0.0f).margin (0.001f));
+
+            // still close to 0
+            REQUIRE (range.convertFrom0to1 (0.9999f) == Catch::Approx (0.0f).margin (0.01f));
+
+        }
+
+        SECTION ("Round-trip")
+        {
+            float originalDb = -10.0f;
+            float normalized = range.convertTo0to1 (originalDb);
+            float backDb = range.convertFrom0to1 (normalized);
+            REQUIRE (backDb == Catch::Approx (originalDb).margin (0.001f));
+        }
+    }
+
+    SECTION ("decibelRange -3 to +3")
+    {
+        auto range = decibelRange (-3.0f, 3.0f);
+
+        SECTION ("Boundaries")
+        {
+            REQUIRE (range.convertFrom0to1 (0.0f) == Catch::Approx (-3.0f).margin (0.001f));
+            REQUIRE (range.convertFrom0to1 (1.0f) == Catch::Approx (3.0f).margin (0.001f));
+        }
+
+        SECTION ("Round-trip")
+        {
+            float originalDb = 0.0f;
+            float normalized = range.convertTo0to1 (originalDb);
+            float backDb = range.convertFrom0to1 (normalized);
+            REQUIRE (backDb == Catch::Approx (originalDb).margin (0.001f));
+        }
+
+        SECTION ("MidpointCheck")
+        {
+            float midpoint = 0.5f;
+            float dbVal = range.convertFrom0to1 (midpoint);
+            // Just an example check: confirm it's near the midpoint in amplitude space
+            float expectedAmp = std::pow (10.0f, dbVal / 20.0f);
+            float minAmp = std::pow (10.0f, -3.0f / 20.0f);
+            float maxAmp = std::pow (10.0f, 3.0f / 20.0f);
+            float midAmp = minAmp * std::sqrt (maxAmp / minAmp);
+            REQUIRE (expectedAmp == Catch::Approx (midAmp).margin (0.001f));
         }
     }
 }
