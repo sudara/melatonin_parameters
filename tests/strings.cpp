@@ -41,7 +41,7 @@ TEST_CASE ("intRangeWithMidPoint")
         SECTION ("returns the midpoint when the value is 0.5")
         {
             auto range = intRangeWithMidPoint (0, 100, 80);
-            REQUIRE (range.convertFrom0to1 (0.5f) == 80.f);
+            REQUIRE (range.convertFrom0to1 (0.5f) == Catch::Approx(80.f));
         }
 
         SECTION ("returns the min when the value is 0")
