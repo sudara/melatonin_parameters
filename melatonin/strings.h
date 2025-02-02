@@ -70,10 +70,15 @@ static inline auto intValueFromString = [] (const juce::String& text) {
     return (float) text.getIntValue();
 };
 
-static inline auto stringFromPercentValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
-    // we want 0 significant digits, but this juce string helper is odd...
-    // so we have to make one decimal place, then drop that and the decimal char
-    return juce::String (value * 100.0f, 1).dropLastCharacters (2) + "%";
+static inline auto stringFromPercentValue = [] (float value, [[maybe_unused]] int maximumStringLength = 0) {
+        // we want 0 significant digits, but this juce string helper is odd...
+        // so we have to make one decimal place, then drop that and the decimal char
+        return juce::String (value * 100.0f, 1).dropLastCharacters (2) + "%";
+};
+
+template<int MaxDigits>
+static inline auto stringFromPercentValueWithDigits = [] (float value, [[maybe_unused]] int maximumStringLength = 0) {
+    return juce::String (value * 100.0f, MaxDigits) + "%";
 };
 
 static inline auto percentValueFromString = [] (const juce::String& text) {
