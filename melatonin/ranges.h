@@ -24,12 +24,9 @@ static inline juce::NormalisableRange<float> logarithmicRange (const float logSt
 // for example see lots of detail in the 0-30ms range of a 20-second slider
 // this will basically plop a linear range in front of a compressed exponential range, bunching the exponential range up
 // https://www.desmos.com/calculator/lz92tpns3b
-static inline juce::NormalisableRange<float> logarithmicRangeWithLinearStart (const float logStart, const float logEnd, const float exponent, const float unnormalizedBreakpoint)
+static inline juce::NormalisableRange<float> logarithmicRangeWithLinearStart (const float logStart, const float logEnd, const float exponent, const float unnormalizedBreakpoint, const float breakpointOnSlider=0.25f)
 {
     jassert (unnormalizedBreakpoint >= logStart);
-
-    // this can eventually be parameterized
-    constexpr float breakpointOnSlider = 0.25f;
 
     return {
         logStart, logEnd,

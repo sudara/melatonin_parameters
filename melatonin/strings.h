@@ -62,6 +62,25 @@ static inline auto dBFromString = [] (const juce::String& text) {
         return text.getFloatValue();
 };
 
+static inline auto stringFromDBValueWithOffAt64 = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
+    // only 1 decimal place for db values
+    if (juce::approximatelyEqual (value, -64.0f))
+        return juce::String ("OFF");
+    return juce::String (value, 1) + "db";
+};
+
+static inline auto dBFromStringWithOffAt64 = [] (const juce::String& text) {
+    if (text.toLowerCase() == "off")
+        return -64.0f;
+    if (text.endsWith ("db"))
+    {
+        return text.dropLastCharacters (2).getFloatValue();
+    }
+    else
+        return text.getFloatValue();
+};
+
+
 static inline auto stringFromIntValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
     return juce::String ((int) value);
 };

@@ -187,7 +187,7 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
     SECTION ("logarithmic range with linear start 0 to 1")
     {
-        auto range = logarithmicRangeWithLinearStart (0.0f, 1.0f, 6.0f, 0.25);
+        auto range = logarithmicRangeWithLinearStart (0.0f, 1.0f, 6.0f, 0.25f, 0.25f);
 
         SECTION ("handles 0 perfectly")
         {
