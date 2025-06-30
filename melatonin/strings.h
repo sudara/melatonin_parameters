@@ -62,6 +62,7 @@ static inline auto dBFromString = [] (const juce::String& text) {
         return text.getFloatValue();
 };
 
+// make this accept float or double
 static inline auto stringFromDBValueWithOffAt64 = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
     // only 1 decimal place for db values
     if (juce::approximatelyEqual (value, -64.0f))

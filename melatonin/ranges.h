@@ -1,5 +1,21 @@
 #pragma once
 
+
+static inline juce::NormalisableRange<float> linearRange (const float start, const float end)
+{
+    return {
+        start, end,
+        // In all the following, "start" and "end" describe the unnormalized range
+        // for example 0 to 15 or 0 to 100.
+        [=] (const float, const float, const float normalised) {
+            return start + normalised * (end - start);
+        },
+        [=] (const float, const float, const float unnormalised) {
+            return (unnormalised - start) / (end - start);
+        }
+    };
+}
+
 // https://www.desmos.com/calculator/qkc6naksy5
 //
 // The exponent controls how exponential the curve is,
@@ -42,7 +58,7 @@ static inline juce::NormalisableRange<float> logarithmicRangeWithLinearStart (co
             const auto normalizedX = (normalizedValue - breakpointOnSlider)/(1.0f - breakpointOnSlider);
             return unnormalizedBreakpoint + (std::exp2 (normalizedX * exponent) - 1) * (end - unnormalizedBreakpoint) / (std::exp2 (exponent) - 1);
         },
-        [=] (const float start, const float end, const float unnormalizedValue) {
+        [=] (const float, const float end, const float unnormalizedValue) {
             if (unnormalizedValue < unnormalizedBreakpoint)
             {
                 return (unnormalizedValue / unnormalizedBreakpoint) * breakpointOnSlider;
