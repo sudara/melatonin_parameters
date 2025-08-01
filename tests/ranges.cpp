@@ -1,5 +1,43 @@
 TEST_CASE ("Melatonin Parameters Ranges")
 {
+    SECTION ("linear range 0 to 1")
+    {
+        auto range = linearRange (0.0f, 1.0f);
+        SECTION ("handles 0 perfectly")
+        {
+            REQUIRE (range.convertTo0to1 (0.0f) == 0.0f);
+            REQUIRE (range.convertFrom0to1 (0.0f) == 0.0f);
+        }
+
+        SECTION ("handles 1 perfectly")
+        {
+            REQUIRE (range.convertTo0to1 (1.0f) == 1.0f);
+            REQUIRE (range.convertFrom0to1 (1.0f) == 1.0f);
+        }
+    }
+
+    SECTION ("linear range -1 to 1")
+    {
+        auto range = linearRange (-1.0f, 1.0f);
+        SECTION ("handles -1 perfectly")
+        {
+            REQUIRE (range.convertTo0to1 (-1.0f) == 0.0f);
+            REQUIRE (range.convertFrom0to1 (0.0f) == -1.0f);
+        }
+
+        SECTION ("handles 1 perfectly")
+        {
+            REQUIRE (range.convertTo0to1 (1.0f) == 1.0f);
+            REQUIRE (range.convertFrom0to1 (1.0f) == 1.0f);
+        }
+
+        SECTION ("handles 0 perfectly")
+        {
+            REQUIRE (range.convertTo0to1 (0.0f) == 0.5f);
+            REQUIRE (range.convertFrom0to1 (0.5f) == 0.0f);
+        }
+    }
+
     SECTION ("logarithmicRange 0 to 1 with default exponent of 6", "[parameters]")
     {
         auto range = logarithmicRange (0.0f, 1.0f);
@@ -132,7 +170,7 @@ TEST_CASE ("Melatonin Parameters Ranges")
         {
             SECTION ("unnormalized db values range from -100 to 0")
             {
-                auto range = decibelRangeForHarmonic(1);
+                auto range = decibelRangeForHarmonic (1);
                 REQUIRE (range.convertFrom0to1 (0.0f) == -100.f);
                 REQUIRE (range.convertFrom0to1 (1.0f) == 0.0f);
 
@@ -142,7 +180,7 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
             SECTION ("handles out of bounds input")
             {
-                auto range = decibelRangeForHarmonic(1);
+                auto range = decibelRangeForHarmonic (1);
                 REQUIRE (range.convertTo0to1 (-120.f) == 0.0f);
             }
 
@@ -276,12 +314,10 @@ TEST_CASE ("Melatonin Parameters Ranges")
             // still close to -30
             REQUIRE (range.convertFrom0to1 (0.0001f) == Catch::Approx (-30.0f).margin (0.01f));
 
-
             REQUIRE (range.convertFrom0to1 (1.0f) == Catch::Approx (0.0f).margin (0.001f));
 
             // still close to 0
             REQUIRE (range.convertFrom0to1 (0.9999f) == Catch::Approx (0.0f).margin (0.01f));
-
         }
 
         SECTION ("Round-trip")

@@ -111,11 +111,11 @@ static inline auto percentValueFromString = [] (const juce::String& text) {
 
 static inline auto stringFromHzValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
     if (value < 2.0f)
-        return juce::String (value, 2) + "Hz";
+        return juce::String (value, 2) + " Hz";
     if (value < 10.0f)
-        return juce::String (value, 1) + "Hz";
+        return juce::String (value, 1) + " Hz";
 
-    return juce::String (value, 1).dropLastCharacters (2) + "Hz";
+    return juce::String (value, 1).dropLastCharacters (2) + " Hz";
 };
 
 static inline auto hzValueFromString = [] (const juce::String& text) {
@@ -124,6 +124,15 @@ static inline auto hzValueFromString = [] (const juce::String& text) {
         return text.dropLastCharacters (2).getFloatValue();
     }
     return text.getFloatValue();
+};
+
+
+static inline auto stringFromSemiValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
+    return juce::String ((int) value) + " semi";
+};
+
+static inline auto semiValueFromString = [] (const juce::String& text) {
+    return (float) text.getIntValue();
 };
 
 static inline auto stringFrom0to1 = [] (float value, [[maybe_unused]] int maximumStringLength = 4) {
