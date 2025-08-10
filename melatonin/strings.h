@@ -81,7 +81,6 @@ static inline auto dBFromStringWithOffAt64 = [] (const juce::String& text) {
         return text.getFloatValue();
 };
 
-
 static inline auto stringFromIntValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
     return juce::String ((int) value);
 };
@@ -91,18 +90,25 @@ static inline auto intValueFromString = [] (const juce::String& text) {
 };
 
 static inline auto stringFromPercentValue = [] (float value, [[maybe_unused]] int maximumStringLength = 0) {
-        // we want 0 significant digits, but this juce string helper is odd...
-        // so we have to make one decimal place, then drop that and the decimal char
-        return juce::String (value * 100.0f, 1).dropLastCharacters (2) + "%";
+    // we want 0 significant digits, but this juce string helper is odd...
+    // so we have to make one decimal place, then drop that and the decimal char
+    return juce::String (value * 100.0f, 1).dropLastCharacters (2) + "%";
 };
 
-template<int MaxDigits>
+template <int MaxDigits>
 static inline auto stringFromPercentValueWithDigits = [] (float value, [[maybe_unused]] int maximumStringLength = 0) {
+    if (juce::approximatelyEqual (value, 0.0f))
+        return juce::String ("OFF");
+
     return juce::String (value * 100.0f, MaxDigits) + "%";
 };
 
 static inline auto percentValueFromString = [] (const juce::String& text) {
-    if (text.endsWith ("%"))
+    if (text.toLowerCase() == "off")
+    {
+        return 0.0f;
+    }
+    else if (text.endsWith ("%"))
     {
         return text.dropLastCharacters (1).getFloatValue() / 100.0f;
     }
@@ -125,7 +131,6 @@ static inline auto hzValueFromString = [] (const juce::String& text) {
     }
     return text.getFloatValue();
 };
-
 
 static inline auto stringFromSemiValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
     return juce::String ((int) value) + " semi";
