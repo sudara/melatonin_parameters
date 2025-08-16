@@ -41,7 +41,7 @@ TEST_CASE ("intRangeWithMidPoint")
         SECTION ("returns the midpoint when the value is 0.5")
         {
             auto range = intRangeWithMidPoint (0, 100, 80);
-            REQUIRE (range.convertFrom0to1 (0.5f) == Catch::Approx(80.f));
+            REQUIRE (range.convertFrom0to1 (0.5f) == Catch::Approx (80.f));
         }
 
         SECTION ("returns the min when the value is 0")
@@ -246,6 +246,50 @@ TEST_CASE ("Melatonin Parameters to/from string")
             REQUIRE (percentValueFromString ("100%") == 1.f);
             REQUIRE (percentValueFromString ("50%") == 0.5f);
             REQUIRE (percentValueFromString ("25%") == 0.25f);
+        }
+    }
+
+    SECTION ("stringFromHzValue")
+    {
+        SECTION ("converts to a nicely formatted frequency")
+        {
+            SECTION ("under 2Hz has 2 decimal places")
+            {
+                REQUIRE (stringFromHzValue (0.0000000000f) == "0.00 Hz");
+                REQUIRE (stringFromHzValue (0.99f) == "0.99 Hz");
+                REQUIRE (stringFromHzValue (1.99f) == "1.99 Hz");
+            }
+
+            SECTION ("over 2Hz has single decimal precision")
+            {
+                REQUIRE (stringFromHzValue (2.01f) == "2.0 Hz");
+                REQUIRE (stringFromHzValue (10.0f) == "10 Hz");
+                REQUIRE (stringFromHzValue (100.0f) == "100 Hz");
+                REQUIRE (stringFromHzValue (1234.0f) == "1234 Hz");
+            }
+
+            SECTION ("khz gets single decimal precision")
+            {
+                REQUIRE (stringFromHzValue (1500.0f) == "1.5 kHz");
+                REQUIRE (stringFromHzValue (2000.0f) == "2.0 kHz");
+                REQUIRE (stringFromHzValue (15000.0f) == "15.0 kHz");
+            }
+        }
+    }
+
+    SECTION ("hzValueFromString")
+    {
+        SECTION ("parses a frequency")
+        {
+            CHECK (hzValueFromString ("0 Hz") == 0.f);
+            CHECK (hzValueFromString ("1.00 Hz") == 1.f);
+            CHECK (hzValueFromString ("2.00 Hz") == 2.f);
+            CHECK (hzValueFromString ("10.0 Hz") == 10.f);
+            CHECK (hzValueFromString ("100 Hz") == 100.f);
+            CHECK (hzValueFromString ("1234 Hz") == 1234.f);
+            CHECK (hzValueFromString ("1.50 kHz") == 1500.f);
+            CHECK (hzValueFromString ("2.0 kHz") == 2000.f);
+            CHECK (hzValueFromString ("15.0 kHz") == 15000.f);
         }
     }
 }
