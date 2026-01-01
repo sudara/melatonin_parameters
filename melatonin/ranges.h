@@ -83,6 +83,7 @@ static inline juce::NormalisableRange<float> reversedLogarithmicRange (float log
     };
 }
 
+// juce::AudioParameterInt doesn't have normalizable ranges, super annoying, but that's why this is float
 static inline juce::NormalisableRange<float> intRangeWithMidPoint (int min, int max, int midpoint)
 {
     const float linearSkew = 2 * (((float) midpoint - (float) min) / ((float) max - (float) min));
@@ -140,12 +141,12 @@ static inline juce::NormalisableRange<float> decibelRangeForHarmonic (size_t har
         juce::Decibels::gainToDecibels (maxGainForHarmonic, minimum),
 
         // convertFrom0to1
-        [=] (float min, float max, float normalizedGain) {
+        [=] (float min, float /*max*/, float normalizedGain) {
             return juce::Decibels::gainToDecibels<float> (normalizedGain / (float) harmonicNumber, min);
         },
 
         // convertTo0to1
-        [=] (float min, float max, float dB) {
+        [=] (float min, float /*max*/, float dB) {
             // This can sometimes result in a number just barely above 1.0f
             return juce::jmin (1.0f, (float) harmonicNumber * juce::Decibels::decibelsToGain (dB, min));
         }

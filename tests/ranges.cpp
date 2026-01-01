@@ -180,8 +180,8 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
             SECTION ("handles out of bounds input")
             {
-                auto range = decibelRangeForHarmonic (1);
-                REQUIRE (range.convertTo0to1 (-120.f) == 0.0f);
+                auto boundsRange = decibelRangeForHarmonic (1);
+                REQUIRE (boundsRange.convertTo0to1 (-120.f) == 0.0f);
             }
 
             //  See docs/Per harmonic db ranges.numbers for example values
