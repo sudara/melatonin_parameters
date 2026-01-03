@@ -5,14 +5,14 @@ TEST_CASE ("Melatonin Parameters Ranges")
         auto range = linearRange (0.0f, 1.0f);
         SECTION ("handles 0 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (0.0f) == 0.0f);
-            REQUIRE (range.convertFrom0to1 (0.0f) == 0.0f);
+            REQUIRE (range.convertTo0to1 (0.0f) == Catch::Approx (0.0f));
+            REQUIRE (range.convertFrom0to1 (0.0f) == Catch::Approx (0.0f));
         }
 
         SECTION ("handles 1 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (1.0f) == 1.0f);
-            REQUIRE (range.convertFrom0to1 (1.0f) == 1.0f);
+            REQUIRE (range.convertTo0to1 (1.0f) == Catch::Approx (1.0f));
+            REQUIRE (range.convertFrom0to1 (1.0f) == Catch::Approx (1.0f));
         }
     }
 
@@ -21,20 +21,20 @@ TEST_CASE ("Melatonin Parameters Ranges")
         auto range = linearRange (-1.0f, 1.0f);
         SECTION ("handles -1 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (-1.0f) == 0.0f);
-            REQUIRE (range.convertFrom0to1 (0.0f) == -1.0f);
+            REQUIRE (range.convertTo0to1 (-1.0f) == Catch::Approx (0.0f));
+            REQUIRE (range.convertFrom0to1 (0.0f) == Catch::Approx (-1.0f));
         }
 
         SECTION ("handles 1 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (1.0f) == 1.0f);
-            REQUIRE (range.convertFrom0to1 (1.0f) == 1.0f);
+            REQUIRE (range.convertTo0to1 (1.0f) == Catch::Approx (1.0f));
+            REQUIRE (range.convertFrom0to1 (1.0f) == Catch::Approx (1.0f));
         }
 
         SECTION ("handles 0 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (0.0f) == 0.5f);
-            REQUIRE (range.convertFrom0to1 (0.5f) == 0.0f);
+            REQUIRE (range.convertTo0to1 (0.0f) == Catch::Approx (0.5f));
+            REQUIRE (range.convertFrom0to1 (0.5f) == Catch::Approx (0.0f));
         }
     }
 
@@ -44,14 +44,14 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
         SECTION ("handles 0 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (0.0f) == 0.0f);
-            REQUIRE (range.convertFrom0to1 (0.0f) == 0.0f);
+            REQUIRE (range.convertTo0to1 (0.0f) == Catch::Approx (0.0f));
+            REQUIRE (range.convertFrom0to1 (0.0f) == Catch::Approx (0.0f));
         }
 
         SECTION ("handles 1 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (1.0f) == 1.0f);
-            REQUIRE (range.convertFrom0to1 (1.0f) == 1.0f);
+            REQUIRE (range.convertTo0to1 (1.0f) == Catch::Approx (1.0f));
+            REQUIRE (range.convertFrom0to1 (1.0f) == Catch::Approx (1.0f));
         }
 
         SECTION ("converts a linear range to logarithmic")
@@ -94,14 +94,14 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
         SECTION ("handles 0 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (0.0f) == 1.0f);
-            REQUIRE (range.convertFrom0to1 (1.0f) == 0.0f);
+            REQUIRE (range.convertTo0to1 (0.0f) == Catch::Approx (1.0f));
+            REQUIRE (range.convertFrom0to1 (1.0f) == Catch::Approx (0.0f));
         }
 
         SECTION ("handles 10 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (10.0f) == 0.0f);
-            REQUIRE (range.convertFrom0to1 (0.0f) == 10.0f);
+            REQUIRE (range.convertTo0to1 (10.0f) == Catch::Approx (0.0f));
+            REQUIRE (range.convertFrom0to1 (0.0f) == Catch::Approx (10.0f));
         }
 
         SECTION ("converts a linear to reversed logarithmic")
@@ -146,19 +146,19 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
         SECTION ("handles 0 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (0.0f) == 0.0f);
-            REQUIRE (range.convertFrom0to1 (0.0f) == 0.0f);
+            REQUIRE (range.convertTo0to1 (0.0f) == Catch::Approx (0.0f));
+            REQUIRE (range.convertFrom0to1 (0.0f) == Catch::Approx (0.0f));
         }
 
         SECTION ("handles 44100 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (44100.0f) == 1.0f);
-            REQUIRE (range.convertFrom0to1 (1.0f) == 44100.0f);
+            REQUIRE (range.convertTo0to1 (44100.0f) == Catch::Approx (1.0f));
+            REQUIRE (range.convertFrom0to1 (1.0f) == Catch::Approx (44100.0f));
         }
 
         SECTION ("converts happily")
         {
-            // REQUIRE(range.convertTo0to1(441.0f) == 0.1f);
+            // REQUIRE(range.convertTo0to1(441.0f) == Catch::Approx (0.1f));
             REQUIRE (range.convertFrom0to1 (0.1f) == Catch::Approx (43.10851f));
             REQUIRE (range.convertFrom0to1 (0.5f) == Catch::Approx (1336.3636f));
 
@@ -170,18 +170,18 @@ TEST_CASE ("Melatonin Parameters Ranges")
         {
             SECTION ("unnormalized db values range from -100 to 0")
             {
-                auto range = decibelRangeForHarmonic (1);
-                REQUIRE (range.convertFrom0to1 (0.0f) == -100.f);
-                REQUIRE (range.convertFrom0to1 (1.0f) == 0.0f);
+                auto dbRange = decibelRangeForHarmonic (1);
+                REQUIRE (dbRange.convertFrom0to1 (0.0f) == Catch::Approx (-100.f));
+                REQUIRE (dbRange.convertFrom0to1 (1.0f) == Catch::Approx (0.0f));
 
-                REQUIRE (range.convertTo0to1 (-100.f) == 0.0f);
-                REQUIRE (range.convertTo0to1 (0.0f) == 1.0f);
+                REQUIRE (dbRange.convertTo0to1 (-100.f) == Catch::Approx (0.0f));
+                REQUIRE (dbRange.convertTo0to1 (0.0f) == Catch::Approx (1.0f));
             }
 
             SECTION ("handles out of bounds input")
             {
                 auto boundsRange = decibelRangeForHarmonic (1);
-                REQUIRE (boundsRange.convertTo0to1 (-120.f) == 0.0f);
+                REQUIRE (boundsRange.convertTo0to1 (-120.f) == Catch::Approx (0.0f));
             }
 
             //  See docs/Per harmonic db ranges.numbers for example values
@@ -200,10 +200,10 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
                 SECTION ("uses the full normalized range of 0 to 1 for the harmonic")
                 {
-                    REQUIRE (range2.convertTo0to1 (-100.f) == 0.0f);
+                    REQUIRE (range2.convertTo0to1 (-100.f) == Catch::Approx (0.0f));
                     REQUIRE (range2.convertTo0to1 (-6.0206f) == Catch::Approx (1.0f));
 
-                    REQUIRE (range3.convertTo0to1 (-100.f) == 0.0f);
+                    REQUIRE (range3.convertTo0to1 (-100.f) == Catch::Approx (0.0f));
                     REQUIRE (range3.convertTo0to1 (-9.5424f) == Catch::Approx (1.0f));
                 }
 
@@ -229,17 +229,17 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
         SECTION ("handles 0 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (0.0f) == 0.0f);
-            REQUIRE (range.convertFrom0to1 (0.0f) == 0.0f);
+            REQUIRE (range.convertTo0to1 (0.0f) == Catch::Approx (0.0f));
+            REQUIRE (range.convertFrom0to1 (0.0f) == Catch::Approx (0.0f));
         }
 
         SECTION ("stays linear for first quarter of the range")
         {
-            REQUIRE (range.convertTo0to1 (0.1f) == 0.1f);
-            REQUIRE (range.convertFrom0to1 (0.1f) == 0.1f);
+            REQUIRE (range.convertTo0to1 (0.1f) == Catch::Approx (0.1f));
+            REQUIRE (range.convertFrom0to1 (0.1f) == Catch::Approx (0.1f));
 
-            REQUIRE (range.convertTo0to1 (0.2f) == 0.2f);
-            REQUIRE (range.convertFrom0to1 (0.2f) == 0.2f);
+            REQUIRE (range.convertTo0to1 (0.2f) == Catch::Approx (0.2f));
+            REQUIRE (range.convertFrom0to1 (0.2f) == Catch::Approx (0.2f));
         }
 
         SECTION ("goes exponential afterwards")
@@ -257,8 +257,8 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
         SECTION ("handles 1 perfectly")
         {
-            REQUIRE (range.convertTo0to1 (1.0f) == 1.0f);
-            REQUIRE (range.convertFrom0to1 (1.0f) == 1.0f);
+            REQUIRE (range.convertTo0to1 (1.0f) == Catch::Approx (1.0f));
+            REQUIRE (range.convertFrom0to1 (1.0f) == Catch::Approx (1.0f));
         }
 
         SECTION ("logarithmic range with linear to 1000 then exp to 10000")
@@ -267,8 +267,8 @@ TEST_CASE ("Melatonin Parameters Ranges")
 
             SECTION ("handles 0 perfectly")
             {
-                REQUIRE (range.convertTo0to1 (0.0f) == 0.0f);
-                REQUIRE (range.convertFrom0to1 (0.0f) == 0.0f);
+                REQUIRE (range.convertTo0to1 (0.0f) == Catch::Approx (0.0f));
+                REQUIRE (range.convertFrom0to1 (0.0f) == Catch::Approx (0.0f));
             }
 
             SECTION ("stays linear for first quarter of the range")
@@ -298,7 +298,7 @@ TEST_CASE ("Melatonin Parameters Ranges")
             SECTION ("handles 1 perfectly")
             {
                 REQUIRE (range.convertTo0to1 (10000.f) == Catch::Approx (1.0f));
-                REQUIRE (range.convertFrom0to1 (1.0f) == 10000.f);
+                REQUIRE (range.convertFrom0to1 (1.0f) == Catch::Approx (10000.f));
             }
         }
     }

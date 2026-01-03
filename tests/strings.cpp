@@ -4,33 +4,33 @@ TEST_CASE ("timeValueFromString", "[parameters]")
     {
         REQUIRE (timeValueFromString (".1ms") == Catch::Approx (0.0001f));
         REQUIRE (timeValueFromString ("0.1ms") == Catch::Approx (0.0001f));
-        REQUIRE (timeValueFromString ("1ms") == 0.001f);
+        REQUIRE (timeValueFromString ("1ms") == Catch::Approx (0.001f));
         REQUIRE (timeValueFromString ("10ms") == Catch::Approx (0.01f));
-        REQUIRE (timeValueFromString ("100ms") == 0.1f);
-        REQUIRE (timeValueFromString ("1000ms") == 1.0f);
+        REQUIRE (timeValueFromString ("100ms") == Catch::Approx (0.1f));
+        REQUIRE (timeValueFromString ("1000ms") == Catch::Approx (1.0f));
     }
 
     SECTION ("converts s correctly")
     {
-        REQUIRE (timeValueFromString (".1s") == 0.1f);
-        REQUIRE (timeValueFromString ("0.1s") == 0.1f);
-        REQUIRE (timeValueFromString ("1s") == 1.0f);
-        REQUIRE (timeValueFromString ("10s") == 10.0f);
+        REQUIRE (timeValueFromString (".1s") == Catch::Approx (0.1f));
+        REQUIRE (timeValueFromString ("0.1s") == Catch::Approx (0.1f));
+        REQUIRE (timeValueFromString ("1s") == Catch::Approx (1.0f));
+        REQUIRE (timeValueFromString ("10s") == Catch::Approx (10.0f));
     }
 
     SECTION ("assumes s when no units single digit and decimal")
     {
-        REQUIRE (timeValueFromString ("1.0") == 1.0f);
-        REQUIRE (timeValueFromString ("3.5") == 3.5f);
-        REQUIRE (timeValueFromString ("5.0") == 5.0f);
+        REQUIRE (timeValueFromString ("1.0") == Catch::Approx (1.0f));
+        REQUIRE (timeValueFromString ("3.5") == Catch::Approx (3.5f));
+        REQUIRE (timeValueFromString ("5.0") == Catch::Approx (5.0f));
     }
 
     SECTION ("assumes ms when no units specified and no decimal")
     {
-        REQUIRE (timeValueFromString ("1") == 0.001f);
+        REQUIRE (timeValueFromString ("1") == Catch::Approx (0.001f));
         REQUIRE (timeValueFromString ("10") == Catch::Approx (0.01f));
-        REQUIRE (timeValueFromString ("100") == 0.1f);
-        REQUIRE (timeValueFromString ("1000") == 1.0f);
+        REQUIRE (timeValueFromString ("100") == Catch::Approx (0.1f));
+        REQUIRE (timeValueFromString ("1000") == Catch::Approx (1.0f));
     }
 }
 
@@ -47,13 +47,13 @@ TEST_CASE ("intRangeWithMidPoint")
         SECTION ("returns the min when the value is 0")
         {
             auto range = intRangeWithMidPoint (0, 100, 80);
-            REQUIRE (range.convertFrom0to1 (0.0f) == 0.f);
+            REQUIRE (range.convertFrom0to1 (0.0f) == Catch::Approx (0.f));
         }
 
         SECTION ("returns the max when the value is 1")
         {
             auto range = intRangeWithMidPoint (0, 100, 80);
-            REQUIRE (range.convertFrom0to1 (1.0f) == 100.f);
+            REQUIRE (range.convertFrom0to1 (1.0f) == Catch::Approx (100.f));
         }
 
         SECTION ("linear distribution under midpoint")
@@ -67,9 +67,9 @@ TEST_CASE ("intRangeWithMidPoint")
         SECTION ("linear distribution above midpoint")
         {
             auto range = intRangeWithMidPoint (0, 100, 80);
-            CHECK (range.convertFrom0to1 (0.6f) == 84.f);
-            CHECK (range.convertFrom0to1 (0.7f) == 88.f);
-            CHECK (range.convertFrom0to1 (0.8f) == 92.f);
+            CHECK (range.convertFrom0to1 (0.6f) == Catch::Approx (84.f));
+            CHECK (range.convertFrom0to1 (0.7f) == Catch::Approx (88.f));
+            CHECK (range.convertFrom0to1 (0.8f) == Catch::Approx (92.f));
         }
     }
 
@@ -78,19 +78,19 @@ TEST_CASE ("intRangeWithMidPoint")
         SECTION ("returns 0.5 when the value is the midpoint")
         {
             auto range = intRangeWithMidPoint (0, 100, 80);
-            REQUIRE (range.convertTo0to1 (80.f) == 0.5f);
+            REQUIRE (range.convertTo0to1 (80.f) == Catch::Approx (0.5f));
         }
 
         SECTION ("returns 0 when the value is the min")
         {
             auto range = intRangeWithMidPoint (0, 100, 80);
-            REQUIRE (range.convertTo0to1 (0.f) == 0.0f);
+            REQUIRE (range.convertTo0to1 (0.f) == Catch::Approx (0.0f));
         }
 
         SECTION ("returns 1 when the value is the max")
         {
             auto range = intRangeWithMidPoint (0, 100, 80);
-            REQUIRE (range.convertTo0to1 (100.f) == 1.0f);
+            REQUIRE (range.convertTo0to1 (100.f) == Catch::Approx (1.0f));
         }
 
         SECTION ("linear distribution below midpoint")
@@ -180,26 +180,26 @@ TEST_CASE ("Melatonin Parameters to/from string")
     {
         SECTION ("-100db converts to 0.0f")
         {
-            REQUIRE (dBFromString ("-100db") == -100.0f);
-            REQUIRE (dBFromString ("-100.00db") == -100.0f);
+            REQUIRE (dBFromString ("-100db") == Catch::Approx (-100.0f));
+            REQUIRE (dBFromString ("-100.00db") == Catch::Approx (-100.0f));
         }
 
         SECTION ("0db converts to 1.0f")
         {
-            REQUIRE (dBFromString ("0db") == 0.0f);
-            REQUIRE (dBFromString ("0.0db") == 0.0f);
+            REQUIRE (dBFromString ("0db") == Catch::Approx (0.0f));
+            REQUIRE (dBFromString ("0.0db") == Catch::Approx (0.0f));
         }
 
         SECTION ("Converts to db when db unit label specified")
         {
-            REQUIRE (dBFromString ("-3db") == -3.0f);
+            REQUIRE (dBFromString ("-3db") == Catch::Approx (-3.0f));
         }
 
         SECTION ("Converts from db even when unit label not specified (no db written at end)")
         {
-            REQUIRE (dBFromString ("-3") == -3.0f);
-            REQUIRE (dBFromString ("-3.1") == -3.1f);
-            REQUIRE (dBFromString ("-3.12") == -3.12f);
+            REQUIRE (dBFromString ("-3") == Catch::Approx (-3.0f));
+            REQUIRE (dBFromString ("-3.1") == Catch::Approx (-3.1f));
+            REQUIRE (dBFromString ("-3.12") == Catch::Approx (-3.12f));
         }
     }
 
@@ -218,10 +218,10 @@ TEST_CASE ("Melatonin Parameters to/from string")
     {
         SECTION ("returns the value as a string")
         {
-            REQUIRE (intValueFromString ("0") == 0.f);
-            REQUIRE (intValueFromString ("1") == 1.f);
-            REQUIRE (intValueFromString ("2") == 2.f);
-            REQUIRE (intValueFromString ("10") == 10.f);
+            REQUIRE (intValueFromString ("0") == Catch::Approx (0.f));
+            REQUIRE (intValueFromString ("1") == Catch::Approx (1.f));
+            REQUIRE (intValueFromString ("2") == Catch::Approx (2.f));
+            REQUIRE (intValueFromString ("10") == Catch::Approx (10.f));
         }
     }
 
@@ -242,10 +242,10 @@ TEST_CASE ("Melatonin Parameters to/from string")
     {
         SECTION ("parses a percentage")
         {
-            REQUIRE (percentValueFromString ("0%") == 0.f);
-            REQUIRE (percentValueFromString ("100%") == 1.f);
-            REQUIRE (percentValueFromString ("50%") == 0.5f);
-            REQUIRE (percentValueFromString ("25%") == 0.25f);
+            REQUIRE (percentValueFromString ("0%") == Catch::Approx (0.f));
+            REQUIRE (percentValueFromString ("100%") == Catch::Approx (1.f));
+            REQUIRE (percentValueFromString ("50%") == Catch::Approx (0.5f));
+            REQUIRE (percentValueFromString ("25%") == Catch::Approx (0.25f));
         }
     }
 
@@ -281,15 +281,15 @@ TEST_CASE ("Melatonin Parameters to/from string")
     {
         SECTION ("parses a frequency")
         {
-            CHECK (hzValueFromString ("0 Hz") == 0.f);
-            CHECK (hzValueFromString ("1.00 Hz") == 1.f);
-            CHECK (hzValueFromString ("2.00 Hz") == 2.f);
-            CHECK (hzValueFromString ("10.0 Hz") == 10.f);
-            CHECK (hzValueFromString ("100 Hz") == 100.f);
-            CHECK (hzValueFromString ("1234 Hz") == 1234.f);
-            CHECK (hzValueFromString ("1.50 kHz") == 1500.f);
-            CHECK (hzValueFromString ("2.0 kHz") == 2000.f);
-            CHECK (hzValueFromString ("15.0 kHz") == 15000.f);
+            CHECK (hzValueFromString ("0 Hz") == Catch::Approx (0.f));
+            CHECK (hzValueFromString ("1.00 Hz") == Catch::Approx (1.f));
+            CHECK (hzValueFromString ("2.00 Hz") == Catch::Approx (2.f));
+            CHECK (hzValueFromString ("10.0 Hz") == Catch::Approx (10.f));
+            CHECK (hzValueFromString ("100 Hz") == Catch::Approx (100.f));
+            CHECK (hzValueFromString ("1234 Hz") == Catch::Approx (1234.f));
+            CHECK (hzValueFromString ("1.50 kHz") == Catch::Approx (1500.f));
+            CHECK (hzValueFromString ("2.0 kHz") == Catch::Approx (2000.f));
+            CHECK (hzValueFromString ("15.0 kHz") == Catch::Approx (15000.f));
         }
     }
 }
