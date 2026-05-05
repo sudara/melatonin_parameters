@@ -160,46 +160,74 @@ TEST_CASE ("Melatonin Parameters to/from string")
 
     SECTION ("stringFromDBValue", "[parameters]")
     {
-        SECTION ("Lowest value is -100db")
+        SECTION ("Lowest value is -100dB")
         {
-            REQUIRE (stringFromDBValue (-100.0f) == "-100.0db");
+            REQUIRE (stringFromDBValue (-100.0f) == "-100.0dB");
         }
 
-        SECTION ("Highest value is -0db")
+        SECTION ("Highest value is -0dB")
         {
-            REQUIRE (stringFromDBValue (0.0f) == "0.0db");
+            REQUIRE (stringFromDBValue (0.0f) == "0.0dB");
         }
 
-        SECTION ("Converts to db, max 1 decimal places")
+        SECTION ("Converts to dB, max 1 decimal places")
         {
-            REQUIRE (stringFromDBValue (-6.123f) == "-6.1db");
+            REQUIRE (stringFromDBValue (-6.123f) == "-6.1dB");
         }
     }
 
     SECTION ("dBFromString", "[parameters]")
     {
-        SECTION ("-100db converts to 0.0f")
+        SECTION ("-100dB converts to 0.0f")
         {
-            REQUIRE (dBFromString ("-100db") == Catch::Approx (-100.0f));
+            REQUIRE (dBFromString ("-100dB") == Catch::Approx (-100.0f));
             REQUIRE (dBFromString ("-100.00db") == Catch::Approx (-100.0f));
         }
 
-        SECTION ("0db converts to 1.0f")
+        SECTION ("0dB converts to 1.0f")
         {
-            REQUIRE (dBFromString ("0db") == Catch::Approx (0.0f));
+            REQUIRE (dBFromString ("0dB") == Catch::Approx (0.0f));
             REQUIRE (dBFromString ("0.0db") == Catch::Approx (0.0f));
         }
 
-        SECTION ("Converts to db when db unit label specified")
+        SECTION ("Converts to dB when dB unit label specified")
         {
-            REQUIRE (dBFromString ("-3db") == Catch::Approx (-3.0f));
+            REQUIRE (dBFromString ("-3dB") == Catch::Approx (-3.0f));
         }
 
-        SECTION ("Converts from db even when unit label not specified (no db written at end)")
+        SECTION ("Converts from dB even when unit label not specified (no dB written at end)")
         {
             REQUIRE (dBFromString ("-3") == Catch::Approx (-3.0f));
             REQUIRE (dBFromString ("-3.1") == Catch::Approx (-3.1f));
             REQUIRE (dBFromString ("-3.12") == Catch::Approx (-3.12f));
+        }
+    }
+
+    SECTION ("stringFromGainValueWithOffAtZero", "[parameters]")
+    {
+        SECTION ("shows OFF at zero gain")
+        {
+            REQUIRE (stringFromGainValueWithOffAtZero (0.0f) == "OFF");
+        }
+
+        SECTION ("shows true db for linear gain")
+        {
+            REQUIRE (stringFromGainValueWithOffAtZero (1.0f) == "0.0dB");
+            REQUIRE (stringFromGainValueWithOffAtZero (juce::Decibels::decibelsToGain (-12.0f, -64.0f)) == "-12.0dB");
+        }
+    }
+
+    SECTION ("gainValueFromDBStringWithOffAtZero", "[parameters]")
+    {
+        SECTION ("parses OFF as zero gain")
+        {
+            REQUIRE (gainValueFromDBStringWithOffAtZero ("OFF") == Catch::Approx (0.0f));
+        }
+
+        SECTION ("parses db text as linear gain")
+        {
+            REQUIRE (gainValueFromDBStringWithOffAtZero ("0dB") == Catch::Approx (1.0f));
+            REQUIRE (gainValueFromDBStringWithOffAtZero ("-12db") == Catch::Approx (juce::Decibels::decibelsToGain (-12.0f, -64.0f)));
         }
     }
 

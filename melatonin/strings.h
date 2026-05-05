@@ -50,11 +50,11 @@ static inline auto timeValueFromString = [] (const juce::String& text) {
 
 static inline auto stringFromDBValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
     // only 1 decimal place for db values
-    return juce::String (value, 1) + "db";
+    return juce::String (value, 1) + "dB";
 };
 
 static inline auto dBFromString = [] (const juce::String& text) {
-    if (text.endsWith ("db"))
+    if (text.toLowerCase().endsWith ("db"))
     {
         return text.dropLastCharacters (2).getFloatValue();
     }
@@ -67,18 +67,34 @@ static inline auto stringFromDBValueWithOffAt64 = [] (float value, [[maybe_unuse
     // only 1 decimal place for db values
     if (juce::approximatelyEqual (value, -64.0f))
         return juce::String ("OFF");
-    return juce::String (value, 1) + "db";
+    return juce::String (value, 1) + "dB";
 };
 
 static inline auto dBFromStringWithOffAt64 = [] (const juce::String& text) {
     if (text.toLowerCase() == "off")
         return -64.0f;
-    if (text.endsWith ("db"))
+    if (text.toLowerCase().endsWith ("db"))
     {
         return text.dropLastCharacters (2).getFloatValue();
     }
     else
         return text.getFloatValue();
+};
+
+// SINE-1076
+static inline auto stringFromGainValueWithOffAtZero = [] (float gain, [[maybe_unused]] int maximumStringLength = 5) {
+    if (juce::approximatelyEqual (gain, 0.0f))
+        return juce::String ("OFF");
+
+    return stringFromDBValue (juce::Decibels::gainToDecibels (gain, -64.0f), maximumStringLength);
+};
+
+static inline auto gainValueFromDBStringWithOffAtZero = [] (const juce::String& text) {
+    if (text.toLowerCase() == "off")
+        return 0.0f;
+
+    const auto db = juce::jlimit (-64.0f, 0.0f, dBFromString (text));
+    return juce::Decibels::decibelsToGain (db, -64.0f);
 };
 
 static inline auto stringFromIntValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
