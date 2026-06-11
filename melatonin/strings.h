@@ -48,6 +48,20 @@ static inline auto timeValueFromString = [] (const juce::String& text) {
     return value;
 };
 
+static inline auto stringFromMsValueWithOffAtZero = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
+    if (value < 0.1f)
+        return juce::String ("OFF");
+    return juce::String (value, 1) + "ms";
+};
+
+static inline auto msValueFromStringWithOffAtZero = [] (const juce::String& text) {
+    if (text.toLowerCase() == "off")
+        return 0.0f;
+    if (text.toLowerCase().endsWith ("ms"))
+        return text.dropLastCharacters (2).getFloatValue();
+    return text.getFloatValue();
+};
+
 static inline auto stringFromDBValue = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
     // only 1 decimal place for db values
     return juce::String (value, 1) + "dB";
@@ -117,6 +131,16 @@ static inline auto stringFromPercentValueWithDigits = [] (float value, [[maybe_u
         return juce::String ("OFF");
 
     return juce::String (value * 100.0f, MaxDigits) + "%";
+};
+
+// keeps ~2 significant figures so log-skewed params still read out below 1%
+static inline auto stringFromPercentValueSignificant = [] (float value, [[maybe_unused]] int maximumStringLength = 0) {
+    if (juce::approximatelyEqual (value, 0.0f))
+        return juce::String ("OFF");
+
+    const float pct = value * 100.0f;
+    const int digits = pct < 1.0f ? 2 : (pct < 10.0f ? 1 : 0);
+    return juce::String (pct, digits) + "%";
 };
 
 static inline auto percentValueFromString = [] (const juce::String& text) {
