@@ -34,6 +34,25 @@ TEST_CASE ("timeValueFromString", "[parameters]")
     }
 }
 
+TEST_CASE ("stringFromMsValueWithAutoAtZero", "[parameters]")
+{
+    REQUIRE (stringFromMsValueWithAutoAtZero (0.0f) == "AUTO");
+    REQUIRE (stringFromMsValueWithAutoAtZero (0.05f) == "AUTO");
+    REQUIRE (stringFromMsValueWithAutoAtZero (0.1f) == "0.1ms");
+    REQUIRE (stringFromMsValueWithAutoAtZero (22.2f) == "22.2ms");
+    REQUIRE (stringFromMsValueWithAutoAtZero (200.0f) == "200.0ms");
+}
+
+TEST_CASE ("msValueFromStringWithAutoAtZero", "[parameters]")
+{
+    REQUIRE (msValueFromStringWithAutoAtZero ("AUTO") == 0.0f);
+    REQUIRE (msValueFromStringWithAutoAtZero ("auto") == 0.0f);
+    REQUIRE (msValueFromStringWithAutoAtZero ("off") == 0.0f);
+    REQUIRE (msValueFromStringWithAutoAtZero ("22.2ms") == Catch::Approx (22.2f));
+    REQUIRE (msValueFromStringWithAutoAtZero ("22.2") == Catch::Approx (22.2f));
+    REQUIRE (msValueFromStringWithAutoAtZero ("0") == 0.0f);
+}
+
 TEST_CASE ("intRangeWithMidPoint")
 {
     SECTION ("from 0 to 1")

@@ -48,14 +48,14 @@ static inline auto timeValueFromString = [] (const juce::String& text) {
     return value;
 };
 
-static inline auto stringFromMsValueWithOffAtZero = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
+static inline auto stringFromMsValueWithAutoAtZero = [] (float value, [[maybe_unused]] int maximumStringLength = 5) {
     if (value < 0.1f)
-        return juce::String ("OFF");
+        return juce::String ("AUTO");
     return juce::String (value, 1) + "ms";
 };
 
-static inline auto msValueFromStringWithOffAtZero = [] (const juce::String& text) {
-    if (text.toLowerCase() == "off")
+static inline auto msValueFromStringWithAutoAtZero = [] (const juce::String& text) {
+    if (text.toLowerCase() == "auto" || text.toLowerCase() == "off")
         return 0.0f;
     if (text.toLowerCase().endsWith ("ms"))
         return text.dropLastCharacters (2).getFloatValue();
