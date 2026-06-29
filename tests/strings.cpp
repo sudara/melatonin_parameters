@@ -53,6 +53,28 @@ TEST_CASE ("msValueFromStringWithAutoAtZero", "[parameters]")
     REQUIRE (msValueFromStringWithAutoAtZero ("0") == 0.0f);
 }
 
+TEST_CASE ("stringFrom0to1WithOffAtZero", "[parameters]")
+{
+    SECTION ("shows OFF at zero")
+    {
+        REQUIRE (stringFrom0to1WithOffAtZero (0.0f) == "OFF");
+    }
+
+    SECTION ("keeps sub-0.001 values distinct")
+    {
+        REQUIRE (stringFrom0to1WithOffAtZero (0.0002f) == "0.0002");
+        REQUIRE (stringFrom0to1WithOffAtZero (0.0005f) == "0.0005");
+    }
+
+    SECTION ("fixed 4 decimals so the readout width doesn't jitter while dragging")
+    {
+        REQUIRE (stringFrom0to1WithOffAtZero (0.0152f) == "0.0152");
+        REQUIRE (stringFrom0to1WithOffAtZero (0.015f) == "0.0150");
+        REQUIRE (stringFrom0to1WithOffAtZero (0.5f) == "0.5000");
+        REQUIRE (stringFrom0to1WithOffAtZero (1.0f) == "1.0000");
+    }
+}
+
 TEST_CASE ("intRangeWithMidPoint")
 {
     SECTION ("from 0 to 1")

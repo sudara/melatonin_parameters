@@ -191,6 +191,13 @@ static inline auto stringFrom0to1 = [] (float value, [[maybe_unused]] int maximu
     return juce::String (value, maximumStringLength);
 };
 
+static inline auto stringFrom0to1WithOffAtZero = [] (float value, [[maybe_unused]] int maximumStringLength = 0) {
+    if (juce::approximatelyEqual (value, 0.0f))
+        return juce::String ("OFF");
+    // fixed 4 decimals: keeps sub-0.001 values distinct and a constant width so the readout doesn't jitter while dragging
+    return juce::String (value, 4);
+};
+
 static inline auto zeroTo1FromString = [] (const juce::String& text) {
     return text.getFloatValue();
 };
